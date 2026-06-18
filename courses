@@ -260,7 +260,7 @@
             <div class="card-subtitle">Быстрый Старт</div>
             
             <div class="price-block">
-                <div class="price">[Укажи цену] <span>сум</span></div>
+                <div class="price">800 000 <span>сум</span></div>
                 <div class="price-note">Доступ к материалам на 3 месяца</div>
             </div>
 
@@ -288,7 +288,7 @@
             <div class="card-subtitle">Масштабирование и ТОП</div>
             
             <div class="price-block">
-                <div class="price">[Укажи цену] <span>сум</span></div>
+                <div class="price">1 300 000<span>сум</span></div>
                 <div class="price-note">Доступ на 6 месяцев + личный разбор от эксперта</div>
             </div>
 
