@@ -4,45 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тарифы обучения — U-Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --uhub-purple: #5F259F;      /* Глубокий фиолетовый Uzum */
-            --uhub-neon: #2ee80a;        /* Яркий неоновый зеленый для акцентов и роста */
+            --uhub-purple-dim: rgba(95, 37, 159, 0.1);
+            --uhub-neon: #2ee80a;        /* Яркий неоновый зеленый */
             --uhub-dark: #12131a;        /* Премиальный темный для текста */
+            --uhub-dark3: #1c1d24;       /* Фон полей формы */
             --uhub-muted: #6c727f;       /* Серый для второстепенного текста */
-            --uhub-bg: #fafaff;          /* Очень светлый чистый фон */
+            --uhub-bg: #fafaff;          /* Светлый чистый фон */
             --uhub-card-bg: #ffffff;
             --border-light: #eef0f6;
+            --border-bright: rgba(95, 37, 159, 0.35);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             background-color: var(--uhub-bg);
             color: var(--uhub-dark);
             line-height: 1.6;
-            padding: 60px 20px;
+            padding: 0 0 100px 0;
         }
+
+        /* НАВИГАЦИЯ */
+        nav {
+            position: sticky; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 18px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(250, 250, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-logo { font-family: 'Unbounded', sans-serif; font-size: 18px; color: var(--uhub-dark); letter-spacing: -0.5px; font-weight: 800; text-decoration: none;}
+        .nav-logo span { color: var(--uhub-purple); }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        
+        .lang-select {
+            background: #ffffff;
+            color: var(--uhub-dark);
+            border: 1px solid var(--border-light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .nav-back {
+            background: transparent; color: var(--uhub-purple);
+            border: 1px solid var(--uhub-purple); border-radius: 10px;
+            padding: 10px 22px; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.25s ease;
+            text-decoration: none;
+        }
+        .nav-back:hover { background: var(--uhub-purple-dim); }
 
         .container {
             max-width: 1040px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 60px;
+            margin: 60px 0;
         }
 
         .header h1 {
+            font-family: 'Unbounded', sans-serif;
             font-size: 2.6rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
             margin-bottom: 16px;
             color: var(--uhub-dark);
         }
@@ -52,7 +92,6 @@
             color: var(--uhub-muted);
             max-width: 580px;
             margin: 0 auto;
-            font-weight: 400;
         }
 
         .tariffs-grid {
@@ -60,6 +99,7 @@
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 32px;
             align-items: stretch;
+            margin-bottom: 100px;
         }
 
         .card {
@@ -73,14 +113,12 @@
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Минималистичный и чистый эффект при наведении */
         .card:hover {
             transform: translateY(-8px);
             border-color: rgba(95, 37, 159, 0.2);
             box-shadow: 0 20px 40px rgba(95, 37, 159, 0.04);
         }
 
-        /* Выделение продвинутого тарифа в стиле U-Hub */
         .card.featured {
             border: 2px solid var(--uhub-purple);
         }
@@ -106,6 +144,7 @@
         }
 
         .card-title {
+            font-family: 'Unbounded', sans-serif;
             font-size: 1.8rem;
             font-weight: 800;
             color: var(--uhub-dark);
@@ -149,7 +188,7 @@
         .features-list {
             list-style: none;
             margin-bottom: 40px;
-            flex-grow: 1; /* Толкает блок результата и кнопку вниз, выравнивая карточки */
+            flex-grow: 1;
         }
 
         .features-list li {
@@ -160,7 +199,6 @@
             color: #3e424b;
         }
 
-        /* Маркер в виде стильной фиолетовой точки-галочки */
         .features-list li::before {
             content: "";
             position: absolute;
@@ -194,7 +232,6 @@
             font-weight: 700;
         }
 
-        /* Современные плоские кнопки управления */
         .btn {
             display: block;
             width: 100%;
@@ -209,107 +246,411 @@
             border: none;
         }
 
-        /* Стильная кнопка для базового тарифа */
         .btn-secondary {
             background: #f0f2f8;
             color: var(--uhub-purple);
         }
+        .btn-secondary:hover { background: #e5e8f3; }
 
-        .btn-secondary:hover {
-            background: #e5e8f3;
-        }
-
-        /* Акцентная неоновая кнопка для главного тарифа */
         .btn-neon {
             background: var(--uhub-neon);
             color: var(--uhub-dark);
             box-shadow: 0 4px 15px rgba(46, 232, 10, 0.15);
         }
-
         .btn-neon:hover {
             background: #25cc08;
             box-shadow: 0 6px 20px rgba(46, 232, 10, 0.25);
         }
 
+        /* СТИЛИ ФОРМЫ (КАК В INDEX.HTML) */
+        .form-outer { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+        .form-section {
+            background: #141417; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 32px; padding: 60px 40px;
+            text-align: center; position: relative; overflow: hidden;
+            color: #f5f5f5;
+        }
+        .form-section::before {
+            content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(95, 37, 159, 0.15) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--uhub-neon); margin-bottom: 12px; }
+        .form-section .section-title { font-family: 'Unbounded', sans-serif; font-size: clamp(24px, 3.5vw, 36px); font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+        
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            margin-top: 40px; text-align: left;
+            max-width: 640px; margin-left: auto; margin-right: auto;
+        }
+        @media(max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-section { padding: 40px 20px; } }
+        
+        .form-label { display: block; font-size: 13px; font-weight: 500; color: rgba(245,245,245,0.55); margin-bottom: 8px; }
+        .form-input {
+            width: 100%; padding: 14px 18px;
+            background: #1C1C21; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; color: #f5f5f5;
+            font-size: 15px; outline: none; transition: border-color 0.2s ease;
+            appearance: none; -webkit-appearance: none;
+        }
+        .form-input:focus { border-color: var(--border-bright); }
+        .form-input::placeholder { color: rgba(245,245,245,0.3); }
+        
+        select.form-input { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+        select.form-input option { background: #1C1C21; color: #F5F5F5; }
+        
+        .radio-group { display: flex; gap: 12px; }
+        .radio-label {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 13px; border-radius: 12px;
+            background: #1C1C21; border: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer; font-size: 14px; font-weight: 500;
+            transition: all 0.2s ease; user-select: none; color: rgba(245,245,245,0.55);
+        }
+        .radio-label.active { border-color: var(--uhub-purple); background: var(--uhub-purple-dim); color: #ffffff; }
+        .radio-label input[type="radio"] { display: none; }
+        
+        .form-submit {
+            width: 100%; max-width: 420px; margin: 32px auto 0;
+            background: var(--uhub-purple); color: #fff; border: none;
+            border-radius: 16px; padding: 18px 32px;
+            font-size: 17px; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; display: block;
+        }
+        .form-submit:hover { background: #7130bd; transform: translateY(-2px); box-shadow: 0 16px 48px rgba(95, 37, 159, 0.35); }
+        .form-submit:disabled { background: #1a7a4a; cursor: default; transform: none; box-shadow: none; }
+        .form-note { font-size: 12px; color: rgba(245,245,245,0.3); margin-top: 16px; }
+
         @media (max-width: 768px) {
-            body {
-                padding: 40px 16px;
-            }
-            .header h1 {
-                font-size: 2.1rem;
-            }
-            .card {
-                padding: 35px 25px;
-            }
+            nav { padding: 14px 20px; }
+            .header h1 { font-size: 2.1rem; }
+            .card { padding: 35px 25px; }
         }
     </style>
 </head>
 <body>
 
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">U<span>-HUB</span></a>
+  <div class="nav-right">
+    <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
+      <option value="ru">RU</option>
+      <option value="uz">UZ</option>
+    </select>
+    <a href="index.html" class="nav-back" data-key="nav_back">На главную</a>
+  </div>
+</nav>
+
 <div class="container">
     <div class="header">
-        <h1>Варианты обучения</h1>
-        <p>Выберите подходящий уровень для быстрого старта или масштабного развития вашего e-commerce бизнеса</p>
+        <h1 data-key="h1_title">Варианты обучения</h1>
+        <p data-key="h1_sub">Выберите подходящий уровень для быстрого старта или масштабного развития вашего e-commerce бизнеса</p>
     </div>
 
     <div class="tariffs-grid">
-        <!-- БАЗОВЫЙ ТАРИФ -->
         <div class="card">
             <div class="card-icon">📘</div>
-            <h2 class="card-title">БАЗОВЫЙ</h2>
-            <div class="card-subtitle">Быстрый Старт</div>
+            <h2 class="card-title" data-key="t1_title">БАЗОВЫЙ</h2>
+            <div class="card-subtitle" data-key="t1_sub">Быстрый Старт</div>
             
             <div class="price-block">
-                <div class="price">800 000 <span>сум</span></div>
-                <div class="price-note">Доступ к материалам на 3 месяца</div>
+                <div class="price">1 200 000 <span>сум</span></div>
+                <div class="price-note" data-key="t1_note">Доступ к материалам на 3 месяца</div>
             </div>
 
             <ul class="features-list">
-                <li><strong>Основы площадки:</strong> Разбор личного кабинета Uzum и регистрация бизнеса (Didox / ИП)</li>
-                <li><strong>Выбор товара:</strong> Алгоритм поиска прибыльной ниши и базовый анализ конкурентов</li>
-                <li><strong>Работа с Китаем:</strong> Поиск фабрик на 1688/Alibaba и заказ через проверенное карго</li>
-                <li><strong>Создание карточек:</strong> Правила SEO-оптимизации на русском и узбекском языках</li>
-                <li><strong>Первая поставка:</strong> Инструкция по маркировке, упаковке и сдаче товара на склад</li>
+                <li data-key="t1_f1"><strong>Основы площадки:</strong> Разбор личного кабинета Uzum и регистрация бизнеса (Didox / ИП)</li>
+                <li data-key="t1_f2"><strong>Выбор товара:</strong> Алгоритм поиска прибыльной ниши и базовый анализ конкурентов</li>
+                <li data-key="t1_f3"><strong>Работа с Китаем:</strong> Поиск фабрик на 1688/Alibaba и заказ через проверенное карго</li>
+                <li data-key="t1_f4"><strong>Создание карточек:</strong> Правила SEO-оптимизации на русском и узбекском языках</li>
+                <li data-key="t1_f5"><strong>Первая поставка:</strong> Инструкция по маркировке, упаковке и сдаче товара на склад</li>
             </ul>
 
             <div class="result-box">
-                <strong>📊 Результат:</strong>
-                Вы полностью понимаете правила игры на маркетплейсе, привезли свой первый товар и открыли продажи без сливов бюджета.
+                <strong data-key="res_label">📊 Результат:</strong>
+                <span data-key="t1_res">Вы полностью понимаете правила игры на маркетплейсе, привезли свой первый товар и открыли продажи без сливов бюджета.</span>
             </div>
 
-            <button class="btn btn-secondary">Выбрать Базовый</button>
+            <button class="btn btn-secondary" onclick="selectTariff('Базовый пакет')" data-key="btn_choose">Выбрать Базовый</button>
         </div>
 
-        <!-- ПРОДВИНУТЫЙ ТАРИФ -->
         <div class="card featured">
-            <div class="badge">Рекомендуем</div>
+            <div class="badge" data-key="badge_rec">Рекомендуем</div>
             <div class="card-icon">🚀</div>
-            <h2 class="card-title">ПРОДВИНУТЫЙ</h2>
-            <div class="card-subtitle">Масштабирование и ТОП</div>
+            <h2 class="card-title" data-key="t2_title">ПРОДВИНУТЫЙ</h2>
+            <div class="card-subtitle" data-key="t2_sub">Масштабирование и ТОП</div>
             
             <div class="price-block">
-                <div class="price">1 300 000<span>сум</span></div>
-                <div class="price-note">Доступ на 6 месяцев + личный разбор от эксперта</div>
+                <div class="price">2 900 000 <span>сум</span></div>
+                <div class="price-note" data-key="t2_note">Доступ на 6 месяцев + личный разбор от эксперта</div>
             </div>
 
             <ul class="features-list">
-                <li class="bold-feat">Всё из Базового пакета</li>
-                <li><strong>Вывод в ТОП:</strong> Стратегии продвижения карточек и удержание позиций в алгоритмах поиска</li>
-                <li><strong>Профессиональный маркетинг:</strong> Настройка внутренней рекламы на Uzum, оптимизация ставок и CTR</li>
-                <li><strong>Экономика и учет:</strong> Калькулятор юнит-экономики (чистая прибыль, ROI, возвраты и комиссии)</li>
-                <li><strong>Делегирование:</strong> Автоматизация операционки, работа с фулфилментом и наем первого менеджера</li>
-                <li><strong>Чат участников:</strong> Закрытый клуб селлеров для обмена опытом и контактами поставщиков</li>
+                <li class="bold-feat" data-key="t2_f1">Всё из Базового пакета</li>
+                <li data-key="t2_f2"><strong>Вывод в ТОП:</strong> Стратегии продвижения карточек и удержание позиций в алгоритмах поиска</li>
+                <li data-key="t2_f3"><strong>Профессиональный маркетинг:</strong> Настройка внутренней рекламы на Uzum, оптимизация ставок и CTR</li>
+                <li data-key="t2_f4"><strong>Экономика и учет:</strong> Калькулятор юнит-экономики (чистая прибыль, ROI, возвраты и комиссии)</li>
+                <li data-key="t2_f5"><strong>Делегирование:</strong> Автоматизация операционки, работа с фулфилментом и наем первого менеджера</li>
+                <li data-key="t2_f6"><strong>Чат участников:</strong> Закрытый клуб селлеров для обмена опытом и контактами поставщиков</li>
             </ul>
 
             <div class="result-box">
-                <strong>📊 Результат:</strong>
-                Вы превратили продажи на Uzum в системный бизнес, умеете управлять рекламой, понимаете свои цифры и масштабируете прибыль.
+                <strong data-key="res_label">📊 Результат:</strong>
+                <span data-key="t2_res">Вы превратили продажи на Uzum в системный бизнес, умеете управлять рекламой, понимаете свои цифры и масштабируете прибыль.</span>
             </div>
 
-            <button class="btn btn-neon">Выбрать Продвинутый</button>
+            <button class="btn btn-neon" onclick="selectTariff('Продвинутый пакет')" data-key="btn_choose">Выбрать Продвинутый</button>
         </div>
     </div>
 </div>
 
+<div class="form-outer" id="form">
+  <div class="form-section">
+    <div class="eyebrow" style="margin-bottom:12px;" data-key="f_eyebrow">Старт обучения</div>
+    <h2 class="section-title" style="margin-bottom:12px;" data-key="f_title">Заявка на курс</h2>
+    <p style="font-size:16px; color:rgba(245,245,245,0.55); max-width:520px; margin:0 auto; line-height:1.7;" data-key="f_sub">
+      Наш менеджер свяжется с вами в течение <strong style="color:#ffffff;" id="f_sub_bold">15 минут</strong>, забронирует место и ответит на все вопросы.
+    </p>
+
+    <div class="form-grid">
+      <div>
+        <label class="form-label" for="fname" data-key="label_name">Ваше имя</label>
+        <input type="text" id="fname" class="form-input" placeholder="Аскар">
+      </div>
+      <div>
+        <label class="form-label" for="phone" data-key="label_phone">Номер телефона</label>
+        <input type="tel" id="phone" class="form-input" placeholder="+998 90 123 45 67">
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label class="form-label" data-key="label_contact">Удобный способ связи</label>
+        <div class="radio-group">
+          <label class="radio-label active" id="rl-call">
+            <input type="radio" name="contact" value="call" checked>
+            <span data-key="radio_call">📞 Позвонить</span>
+          </label>
+          <label class="radio-label" id="rl-tg">
+            <input type="radio" name="contact" value="tg">
+            <span data-key="radio_tg">✈️ Написать в Telegram</span>
+          </label>
+        </div>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label class="form-label" for="tariffSelect" data-key="label_tariff">Выбранный тариф обучения</label>
+        <select id="tariffSelect" class="form-input">
+          <option value="" data-key="opt_t0">Выберите тариф</option>
+          <option value="Базовый пакет" data-key="opt_t1">БАЗОВЫЙ — Быстрый Старт (1 200 000 сум)</option>
+          <option value="Продвинутый пакет" data-key="opt_t2">ПРОДВИНУТЫЙ — Масштабирование (2 900 000 сум)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="form-submit" id="submitBtn" onclick="handleSubmit()" data-key="f_submit">
+      🔥 Записаться на курс
+    </button>
+    <p class="form-note" data-key="f_note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам.</p>
+  </div>
+</div>
+
+<script>
+  const langData = {
+    ru: {
+      nav_back: "На главную",
+      h1_title: "Варианты обучения",
+      h1_sub: "Выберите подходящий уровень для быстрого старта или масштабного развития вашего e-commerce бизнеса",
+      t1_title: "БАЗОВЫЙ",
+      t1_sub: "Быстрый Старт",
+      t1_note: "Доступ к материалам на 3 месяца",
+      t1_f1: "<strong>Основы площадки:</strong> Разбор личного кабинета Uzum и регистрация бизнеса (Didox / ИП)",
+      t1_f2: "<strong>Выбор товара:</strong> Алгоритм поиска прибыльной ниши и базовый анализ конкурентов",
+      t1_f3: "<strong>Работа с Китаем:</strong> Поиск фабрик на 1688/Alibaba и заказ через проверенное карго",
+      t1_f4: "<strong>Создание карточек:</strong> Правила SEO-оптимизации на русском и узбекском языках",
+      t1_f5: "<strong>Первая поставка:</strong> Инструкция по маркировке, упаковке и сдаче товара на склад",
+      res_label: "📊 Результат:",
+      t1_res: "Вы полностью понимаете правила игры на маркетплейсе, привезли свой первый товар и открыли продажи без сливов бюджета.",
+      btn_choose: "Выбрать тариф",
+      badge_rec: "Рекомендуем",
+      t2_title: "ПРОДВИНУТЫЙ",
+      t2_sub: "Масштабирование и ТОП",
+      t2_note: "Доступ на 6 месяцев + личный разбор от эксперта",
+      t2_f1: "Всё из Базового пакета",
+      t2_f2: "<strong>Вывод в ТОП:</strong> Стратегии продвижения карточек и удержание позиций в алгоритмах поиска",
+      t2_f3: "<strong>Профессиональный маркетинг:</strong> Настройка внутренней рекламы на Uzum, оптимизация ставок и CTR",
+      t2_f4: "<strong>Экономика и учет:</strong> Калькулятор юнит-экономики (чистая прибыль, ROI, возвраты и комиссии)",
+      t2_f5: "<strong>Делегирование:</strong> Автоматизация операционки, работа с фулфилментом и наем первого менеджера",
+      t2_f6: "<strong>Чат участников:</strong> Закрытый клуб селлеров для обмена опытом и контактами поставщиков",
+      t2_res: "Вы превратили продажи на Uzum в системный бизнес, умеете управлять рекламой, понимаете свои цифры и масштабируете прибыль.",
+      f_eyebrow: "Старт обучения",
+      f_title: "Заявка на курс",
+      f_sub: "Наш менеджер свяжется с вами в течение <strong style='color:#ffffff;'>15 минут</strong>, забронирует место и ответит на все вопросы.",
+      label_name: "Ваше имя",
+      label_phone: "Номер телефона",
+      label_contact: "Удобный способ связи",
+      radio_call: "📞 Позвонить",
+      radio_tg: "✈️ Написать в Telegram",
+      label_tariff: "Выбранный тариф обучения",
+      opt_t0: "Выберите тариф",
+      opt_t1: "БАЗОВЫЙ — Быстрый Старт (1 200 000 сум)",
+      opt_t2: "ПРОДВИНУТЫЙ — Масштабирование (2 900 000 сум)",
+      f_submit: "🔥 Записаться на курс",
+      f_note: "Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам."
+    },
+    uz: {
+      nav_back: "Bosh sahifaga",
+      h1_title: "Oʻqitish variantlari",
+      h1_sub: "E-commerce biznesingizni tezkor boshlash yoki kengaytirish uchun mos darajani tanlang",
+      t1_title: "BAZAVIY",
+      t1_sub: "Tezkor Start",
+      t1_note: "Materiallardan foydalanish muddati 3 oy",
+      t1_f1: "<strong>Platforma asoslari:</strong> Uzum shaxsiy kabinetini tahlil qilish va biznesni roʻyxatdan oʻtkazish (Didox / YaTT)",
+      t1_f2: "<strong>Mahsulot tanlash:</strong> Daromadli nishani qidirish algoritmi va raqobatchilarning bazaviy tahlili",
+      t1_f3: "<strong>Xitoy bilan ishlash:</strong> 1688/Alibaba platformalaridan fabrikalarni topish va ishonchli kargo orqali buyurtma berish",
+      t1_f4: "<strong>Kartochka yaratish:</strong> Rus va oʻzbek tillarida SEO-optimizatsiya qoidalari",
+      t1_f5: "<strong>Birinchi yetkazib berish:</strong> Markirovka, qadoqlash va mahsulotni omborga topshirish boʻyicha yoʻriqnoma",
+      res_label: "📊 Natija:",
+      t1_res: "Siz marketpleys qoidalarini toʻliq tushunasiz, birinchi mahsulotingizni olib keldingiz va byudjetni behuda sarflamay sotuvlarni boshladingiz.",
+      btn_choose: "Tarifni tanlash",
+      badge_rec: "Tavsiya etamiz",
+      t2_title: "PRODVINUTIY",
+      t2_sub: "Kengaytirish va TOP",
+      t2_note: "Foydalanish muddati 6 oy + ekspertdan shaxsiy tahlil",
+      t2_f1: "Bazaviy paketdagi barcha xizmatlar",
+      t2_f2: "<strong>TOPga olib chiqish:</strong> Kartochkalarni koʻtarish va qidiruv algoritmlarida pozitsiyani ushlab turish strategiyalari",
+      t2_f3: "<strong>Professional marketing:</strong> Uzum ichidagi reklamani sozlash, stavkalar va CTRni optimallashtirish",
+      t2_f4: "<strong>Iqtisodiyot va hisob:</strong> Yunit-iqtisodiyot kalkulyatori (sof foyda, ROI, qaytishlar va komissiyalar)",
+      t2_f5: "<strong>Delegatsiya:</strong> Operatsion jarayonlarni avtomatlashtirish, fulfilment bilan ishlash va birinchi menedjerni yollash",
+      t2_f6: "<strong>Ishtirokchilar chati:</strong> Tajriba almashish va yetkazib beruvchilar kontaktlari uchun yopiq sellerlar klubi",
+      t2_res: "Siz Uzumdagi sotuvlarni tizimli biznesga aylantirdingiz, reklamani boshqarishni bilasiz, raqamlaringizni tushunasiz va foydani kengaytirmoqdasiz.",
+      f_eyebrow: "Oʻqishni boshlash",
+      f_title: "Kursga ariza topshirish",
+      f_sub: "Menejerimiz siz bilan <strong style='color:#ffffff;'>15 daqiqa</strong> ichida bogʻlanadi, joyingizni band qiladi va savollarga javob beradi.",
+      label_name: "Sizning ismingiz",
+      label_phone: "Telefon raqamingiz",
+      label_contact: "Bogʻlanish uchun qulay usul",
+      radio_call: "📞 Qoʻngʻiroq qilish",
+      radio_tg: "✈️ Telegramda yozish",
+      label_tariff: "Tanlangan oʻquv tarifi",
+      opt_t0: "Tarifni tanlang",
+      opt_t1: "BAZAVIY — Tezkor Start (1 200 000 soʻm)",
+      opt_t2: "PRODVINUTIY — Kengaytirish (2 900 000 soʻm)",
+      f_submit: "🔥 Kursga yozilish",
+      f_note: "Tugmani bosish orqali siz shaxsiy maʼlumotlarni qayta ishlashga rozilik bildirasiz. Maʼlumotlarni uchinchi shaxslarga bermaymiz."
+    }
+  };
+
+  // Функция автовыбора тарифа в форме и скролла
+  function selectTariff(tariffValue) {
+    document.getElementById('tariffSelect').value = tariffValue;
+    document.getElementById('form').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Смена языков
+  function changeLanguage(lang) {
+    const elements = document.querySelectorAll('[data-key]');
+    elements.forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (langData[lang][key]) {
+        el.innerHTML = langData[lang][key];
+      }
+    });
+
+    if(lang === 'uz') {
+      document.getElementById('fname').placeholder = "Askar";
+      document.getElementById('f_sub_bold').innerText = "15 daqiqa";
+    } else {
+      document.getElementById('fname').placeholder = "Аскар";
+      document.getElementById('f_sub_bold').innerText = "15 минут";
+    }
+  }
+
+  // Форматирование телефона
+  document.getElementById('phone').addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '');
+    if (v.startsWith('998')) v = v.slice(3);
+    if (v.length > 9) v = v.slice(0, 9);
+    let f = '+998';
+    if (v.length > 0) f += ' ' + v.slice(0, 2);
+    if (v.length > 2) f += ' ' + v.slice(2, 5);
+    if (v.length > 5) f += ' ' + v.slice(5, 7);
+    if (v.length > 7) f += ' ' + v.slice(7, 9);
+    this.value = f;
+  });
+
+  // Логика радио-кнопок способов связи
+  document.querySelectorAll('input[name="contact"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('rl-call').classList.toggle('active', r.value !== 'tg');
+      document.getElementById('rl-tg').classList.toggle('active', r.value === 'tg');
+    });
+  });
+
+  // Отправка заявки в Telegram-бота
+  function handleSubmit() {
+    const btn = document.getElementById('submitBtn');
+    const name = document.getElementById('fname').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const contactMethod = document.querySelector('input[name="contact"]:checked').value;
+    const tariff = document.getElementById('tariffSelect').value;
+    const currentLang = document.getElementById('langSelect').value;
+
+    if (!name || phone.length < 10) {
+      if(currentLang === 'uz') {
+        alert('Iltimos, ismingizni va toʻgʻri telefon raqamingizni kiriting');
+      } else {
+        alert('Пожалуйста, заполните имя и корректный номер телефона');
+      }
+      return;
+    }
+
+    // Ваши действующие токены из главной страницы
+    const telegramBotToken = '8870299305:AAE3RsaPK2DCLK2f_MJFyZYl1yZlsBrbsrs';
+    const telegramChatId = '-5415411606'; 
+
+    const message = `
+<b>🎓 ЗАЯВКА НА ОБУЧЕНИЕ! (Cтраница Курсов)</b>\n
+<b>👤 Имя:</b> ${name}\n
+<b>📞 Телефон:</b> ${phone}\n
+<b>💬 Способ связи:</b> ${contactMethod === 'tg' ? 'Написать в Telegram ✈️' : 'Позвонить 📞'}\n
+<b>📘 Выбранный тариф:</b> ${tariff ? tariff : 'Не выбран'}
+    `;
+
+    if(currentLang === 'uz') {
+      btn.textContent = '⏳ Yuborilmoqda...';
+    } else {
+      btn.textContent = '⏳ Отправка...';
+    }
+    btn.disabled = true;
+
+    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: telegramChatId,
+        text: message,
+        parse_mode: 'HTML'
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        if(currentLang === 'uz') {
+          btn.textContent = '✅ Arizangiz yuborildi! 15 daqiqada bogʻlanamiz.';
+        } else {
+          btn.textContent = '✅ Заявка отправлена! Свяжемся за 15 минут.';
+        }
+        btn.style.background = '#10b981'; 
+      } else {
+        throw new Error('Ошибка сервера');
+      }
+    })
+    .catch(error => {
+      if(currentLang === 'uz') {
+        btn.textContent = '❌ Xatolik. Qaytadan urinib koʻring';
+      } else {
+        btn.textContent = '❌ Ошибка. Попробуйте еще раз';
+      }
+      btn.disabled = false;
+    });
+  }
+</script>
 </body>
 </html>
