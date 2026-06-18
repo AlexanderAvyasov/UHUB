@@ -59,6 +59,16 @@
   }
   .lang-select:focus { border-color: var(--border-bright); }
 
+  .nav-courses {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 22px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.25s ease;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+  }
+  .nav-courses:hover { border-color: rgba(255,255,255,0.25); background: var(--dark3); }
+
   .nav-cta {
     background: var(--orange); color: #fff;
     border: none; border-radius: 10px;
@@ -76,7 +86,7 @@
     text-align: center;
     padding: 120px 40px 80px;
     position: relative;
-    overflow: hden;
+    overflow: hidden;
   }
   .hero-bg {
     position: absolute; inset: 0; pointer-events: none;
@@ -92,7 +102,7 @@
   }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--orange-dim); border: 1px sol var(--border-bright);
+    background: var(--orange-dim); border: 1px solid var(--border-bright);
     border-radius: 100px; padding: 8px 18px;
     font-size: 13px; font-weight: 500; color: var(--orange-light);
     margin-bottom: 32px;
@@ -100,7 +110,7 @@
     animation: fadeUp 0.7s ease 0.2s forwards;
   }
   .hero-badge::before {
-    content: ''; wth: 7px; height: 7px; border-radius: 50%;
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
     background: var(--orange); animation: pulse 2s infinite; flex-shrink: 0;
   }
   @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(1.4);} }
@@ -111,7 +121,7 @@
     line-height: 1.1;
     letter-spacing: -2px;
     margin-bottom: 28px;
-    max-wth: 900px;
+    max-width: 900px;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.8s ease 0.4s forwards;
   }
@@ -119,7 +129,7 @@
   .hero-sub {
     font-size: clamp(15px, 2vw, 18px);
     color: var(--text-muted);
-    max-wth: 620px;
+    max-width: 620px;
     margin-bottom: 48px;
     line-height: 1.7;
     opacity: 0; transform: translateY(20px);
@@ -142,7 +152,7 @@
   .btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,92,0,0.3); }
   .btn-secondary {
     background: transparent; color: var(--text);
-    border: 1px sol var(--border); border-radius: 14px;
+    border: 1px solid var(--border); border-radius: 14px;
     padding: 16px 32px; font-size: 16px; font-weight: 500;
     cursor: pointer; transition: all 0.25s ease;
     font-family: 'Inter', sans-serif;
@@ -169,7 +179,7 @@
     opacity: 0; animation: fadeUp 0.8s ease 1.5s forwards;
   }
   .scroll-hint span { font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
-  .scroll-arrow { wth: 20px; height: 20px; border-right: 1.5px sol var(--text-dim); border-bottom: 1.5px sol var(--text-dim); transform: rotate(45deg); animation: bounce 2s infinite; }
+  .scroll-arrow { width: 20px; height: 20px; border-right: 1.5px solid var(--text-dim); border-bottom: 1.5px solid var(--text-dim); transform: rotate(45deg); animation: bounce 2s infinite; }
   @keyframes bounce { 0%,100%{ transform:rotate(45deg) translateY(0);} 50%{ transform:rotate(45deg) translateY(6px);} }
 
   /* LAYOUT */
@@ -420,6 +430,7 @@
       <option value="ru">RU</option>
       <option value="uz">UZ</option>
     </select>
+    <a href="courses.html" class="nav-courses" data-key="nav_courses">Курсы</a>
     <a href="#form" class="nav-cta" data-key="nav_cta">Бесплатная консультация</a>
   </div>
 </nav>
@@ -745,6 +756,7 @@
 
   const langData = {
     ru: {
+      nav_courses: "Курсы",
       nav_cta: "Бесплатная консультация",
       hero_badge: "Комплексный сервис для селлеров в Узбекистане",
       hero_h1: "Запустим ваш прибыльный бизнес на <span>Uzum Market</span> под ключ",
@@ -847,6 +859,7 @@
       foot_rights: "Все права защищены."
     },
     uz: {
+      nav_courses: "Kurslar",
       nav_cta: "Bepul konsultatsiya",
       hero_badge: "Oʻzbekistondagi sellerlar uchun kompleks xizmat",
       hero_h1: "Uzum Marketda oʻz daromadli biznesingizni <span>pod klyuch</span> ishga tushiring",
