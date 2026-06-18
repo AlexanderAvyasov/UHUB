@@ -76,13 +76,13 @@
     text-align: center;
     padding: 120px 40px 80px;
     position: relative;
-    overflow: hidden;
+    overflow: hden;
   }
   .hero-bg {
     position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse 900px 600px at 50% 40%, rgba(255,92,0,0.07) 0%, transparent 70%);
   }
-  .hero-grid {
+  .hero-gr {
     position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
     background-image: linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
@@ -92,7 +92,7 @@
   }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    background: var(--orange-dim); border: 1px solid var(--border-bright);
+    background: var(--orange-dim); border: 1px sol var(--border-bright);
     border-radius: 100px; padding: 8px 18px;
     font-size: 13px; font-weight: 500; color: var(--orange-light);
     margin-bottom: 32px;
@@ -100,7 +100,7 @@
     animation: fadeUp 0.7s ease 0.2s forwards;
   }
   .hero-badge::before {
-    content: ''; width: 7px; height: 7px; border-radius: 50%;
+    content: ''; wth: 7px; height: 7px; border-radius: 50%;
     background: var(--orange); animation: pulse 2s infinite; flex-shrink: 0;
   }
   @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.5; transform:scale(1.4);} }
@@ -111,7 +111,7 @@
     line-height: 1.1;
     letter-spacing: -2px;
     margin-bottom: 28px;
-    max-width: 900px;
+    max-wth: 900px;
     opacity: 0; transform: translateY(30px);
     animation: fadeUp 0.8s ease 0.4s forwards;
   }
@@ -119,7 +119,7 @@
   .hero-sub {
     font-size: clamp(15px, 2vw, 18px);
     color: var(--text-muted);
-    max-width: 620px;
+    max-wth: 620px;
     margin-bottom: 48px;
     line-height: 1.7;
     opacity: 0; transform: translateY(20px);
@@ -142,7 +142,7 @@
   .btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: 0 10px 40px rgba(255,92,0,0.3); }
   .btn-secondary {
     background: transparent; color: var(--text);
-    border: 1px solid var(--border); border-radius: 14px;
+    border: 1px sol var(--border); border-radius: 14px;
     padding: 16px 32px; font-size: 16px; font-weight: 500;
     cursor: pointer; transition: all 0.25s ease;
     font-family: 'Inter', sans-serif;
@@ -169,7 +169,7 @@
     opacity: 0; animation: fadeUp 0.8s ease 1.5s forwards;
   }
   .scroll-hint span { font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
-  .scroll-arrow { width: 20px; height: 20px; border-right: 1.5px solid var(--text-dim); border-bottom: 1.5px solid var(--text-dim); transform: rotate(45deg); animation: bounce 2s infinite; }
+  .scroll-arrow { wth: 20px; height: 20px; border-right: 1.5px sol var(--text-dim); border-bottom: 1.5px sol var(--text-dim); transform: rotate(45deg); animation: bounce 2s infinite; }
   @keyframes bounce { 0%,100%{ transform:rotate(45deg) translateY(0);} 50%{ transform:rotate(45deg) translateY(6px);} }
 
   /* LAYOUT */
@@ -1092,7 +1092,7 @@
     }
 
     const telegramBotToken = '8870299305:AAE3RsaPK2DCLK2f_MJFyZYl1yZlsBrbsrs';
-    const telegramChatId = '930826522'; 
+    const telegramChatId = '-5415411606'; 
 
     const message = `
 <b>🚨 НОВАЯ ЗАЯВКА С ЛЕНДИНГА!</b>\n
