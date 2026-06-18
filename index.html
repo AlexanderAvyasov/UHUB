@@ -661,38 +661,40 @@
     return;
   }
 
-  // Твои данные из Шага 1 и Шага 2
+  // ЗАМЕНИТЕ НА СВОЙ ЛИЧНЫЙ ID (Узнать можно в @userinfobot)
   const telegramBotToken = '8870299305:AAE3RsaPK2DCLK2f_MJFyZYl1yZlsBrbsrs';
-  const telegramChatId = '8870299305';
+  const telegramChatId = 'ВСТАВЬТЕ_СЮДА_ВАШ_ЛИЧНЫЙ_ТГ_ID'; 
 
-  // Формируем красивый текст для Telegram
+  // Текст сообщения в формате HTML (работает без сбоев)
   const message = `
-🚨 **НОВАЯ ЗАЯВКА С ЛЕНДИНГА!**
-👤 **Имя:** ${name}
-📞 **Телефон:** ${phone}
-💬 **Способ связи:** ${contactMethod === 'tg' ? 'Написать в Telegram ✈️' : 'Позвонить 📞'}
-💰 **Бюджет на закуп:** ${budget ? 'До $' + budget : 'Не указан'}
+<b>🚨 НОВАЯ ЗАЯВКА С ЛЕНДИНГА!</b>\n
+<b>👤 Имя:</b> ${name}\n
+<b>📞 Телефон:</b> ${phone}\n
+<b>💬 Способ связи:</b> ${contactMethod === 'tg' ? 'Написать в Telegram ✈️' : 'Позвонить 📞'}\n
+<b>💰 Бюджет на закуп:</b> ${budget ? 'До $' + budget : 'Не указан'}
   `;
 
   btn.textContent = '⏳ Отправка...';
   btn.disabled = true;
 
-  // Отправляем запрос напрямую в Telegram API
+  // Отправляем запрос
   fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       chat_id: telegramChatId,
       text: message,
-      parse_mode: 'Markdown'
+      parse_mode: 'HTML' // Изменено на HTML для надежности
     })
   })
   .then(response => {
     if (response.ok) {
       btn.textContent = '✅ Заявка отправлена! Свяжемся за 15 минут.';
-      btn.style.background = '#10b981'; // Зеленый цвет успеха
+      btn.style.background = '#10b981'; 
     } else {
-      throw new Error('Ошибка сети');
+      // Выводим ошибку в консоль, чтобы было понятно, что пошло не так
+      response.json().then(err => console.error('Ошибка Telegram API:', err));
+      throw new Error('Ошибка сервера');
     }
   })
   .catch(error => {
