@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тарифы обучения — U-Hub</title>
+    <style>
+        :root {
+            --uhub-purple: #5F259F;      /* Глубокий фиолетовый Uzum */
+            --uhub-neon: #2ee80a;        /* Яркий неоновый зеленый для акцентов и роста */
+            --uhub-dark: #12131a;        /* Премиальный темный для текста */
+            --uhub-muted: #6c727f;       /* Серый для второстепенного текста */
+            --uhub-bg: #fafaff;          /* Очень светлый чистый фон */
+            --uhub-card-bg: #ffffff;
+            --border-light: #eef0f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--uhub-bg);
+            color: var(--uhub-dark);
+            line-height: 1.6;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            color: var(--uhub-dark);
+        }
+
+        .header p {
+            font-size: 1.15rem;
+            color: var(--uhub-muted);
+            max-width: 580px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .tariffs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 32px;
+            align-items: stretch;
+        }
+
+        .card {
+            background: var(--uhub-card-bg);
+            border-radius: 24px;
+            padding: 45px 35px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Минималистичный и чистый эффект при наведении */
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(95, 37, 159, 0.2);
+            box-shadow: 0 20px 40px rgba(95, 37, 159, 0.04);
+        }
+
+        /* Выделение продвинутого тарифа в стиле U-Hub */
+        .card.featured {
+            border: 2px solid var(--uhub-purple);
+        }
+
+        .badge {
+            position: absolute;
+            top: -14px;
+            right: 35px;
+            background: var(--uhub-purple);
+            color: #ffffff;
+            padding: 5px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--uhub-dark);
+            letter-spacing: -0.3px;
+        }
+
+        .card-subtitle {
+            font-size: 0.95rem;
+            color: var(--uhub-muted);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .price-block {
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .price {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--uhub-dark);
+            letter-spacing: -1px;
+        }
+
+        .price span {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--uhub-muted);
+            margin-left: 4px;
+        }
+
+        .price-note {
+            font-size: 0.85rem;
+            color: var(--uhub-purple);
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 40px;
+            flex-grow: 1; /* Толкает блок результата и кнопку вниз, выравнивая карточки */
+        }
+
+        .features-list li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            color: #3e424b;
+        }
+
+        /* Маркер в виде стильной фиолетовой точки-галочки */
+        .features-list li::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 8px;
+            width: 6px;
+            height: 6px;
+            background-color: var(--uhub-purple);
+            border-radius: 50%;
+        }
+
+        .features-list li.bold-feat {
+            font-weight: 700;
+            color: var(--uhub-purple);
+        }
+
+        .result-box {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 35px;
+            font-size: 0.9rem;
+            color: #444850;
+            border: 1px solid var(--border-light);
+        }
+
+        .result-box strong {
+            color: var(--uhub-dark);
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        /* Современные плоские кнопки управления */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Стильная кнопка для базового тарифа */
+        .btn-secondary {
+            background: #f0f2f8;
+            color: var(--uhub-purple);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e8f3;
+        }
+
+        /* Акцентная неоновая кнопка для главного тарифа */
+        .btn-neon {
+            background: var(--uhub-neon);
+            color: var(--uhub-dark);
+            box-shadow: 0 4px 15px rgba(46, 232, 10, 0.15);
+        }
+
+        .btn-neon:hover {
+            background: #25cc08;
+            box-shadow: 0 6px 20px rgba(46, 232, 10, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 40px 16px;
+            }
+            .header h1 {
+                font-size: 2.1rem;
+            }
+            .card {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Варианты обучения</h1>
+        <p>Выберите подходящий уровень для быстрого старта или масштабного развития вашего e-commerce бизнеса</p>
+    </div>
+
+    <div class="tariffs-grid">
+        <!-- БАЗОВЫЙ ТАРИФ -->
+        <div class="card">
+            <div class="card-icon">📘</div>
+            <h2 class="card-title">БАЗОВЫЙ</h2>
+            <div class="card-subtitle">Быстрый Старт</div>
+            
+            <div class="price-block">
+                <div class="price">[Укажи цену] <span>сум</span></div>
+                <div class="price-note">Доступ к материалам на 3 месяца</div>
+            </div>
+
+            <ul class="features-list">
+                <li><strong>Основы площадки:</strong> Разбор личного кабинета Uzum и регистрация бизнеса (Didox / ИП)</li>
+                <li><strong>Выбор товара:</strong> Алгоритм поиска прибыльной ниши и базовый анализ конкурентов</li>
+                <li><strong>Работа с Китаем:</strong> Поиск фабрик на 1688/Alibaba и заказ через проверенное карго</li>
+                <li><strong>Создание карточек:</strong> Правила SEO-оптимизации на русском и узбекском языках</li>
+                <li><strong>Первая поставка:</strong> Инструкция по маркировке, упаковке и сдаче товара на склад</li>
+            </ul>
+
+            <div class="result-box">
+                <strong>📊 Результат:</strong>
+                Вы полностью понимаете правила игры на маркетплейсе, привезли свой первый товар и открыли продажи без сливов бюджета.
+            </div>
+
+            <button class="btn btn-secondary">Выбрать Базовый</button>
+        </div>
+
+        <!-- ПРОДВИНУТЫЙ ТАРИФ -->
+        <div class="card featured">
+            <div class="badge">Рекомендуем</div>
+            <div class="card-icon">🚀</div>
+            <h2 class="card-title">ПРОДВИНУТЫЙ</h2>
+            <div class="card-subtitle">Масштабирование и ТОП</div>
+            
+            <div class="price-block">
+                <div class="price">[Укажи цену] <span>сум</span></div>
+                <div class="price-note">Доступ на 6 месяцев + личный разбор от эксперта</div>
+            </div>
+
+            <ul class="features-list">
+                <li class="bold-feat">Всё из Базового пакета</li>
+                <li><strong>Вывод в ТОП:</strong> Стратегии продвижения карточек и удержание позиций в алгоритмах поиска</li>
+                <li><strong>Профессиональный маркетинг:</strong> Настройка внутренней рекламы на Uzum, оптимизация ставок и CTR</li>
+                <li><strong>Экономика и учет:</strong> Калькулятор юнит-экономики (чистая прибыль, ROI, возвраты и комиссии)</li>
+                <li><strong>Делегирование:</strong> Автоматизация операционки, работа с фулфилментом и наем первого менеджера</li>
+                <li><strong>Чат участников:</strong> Закрытый клуб селлеров для обмена опытом и контактами поставщиков</li>
+            </ul>
+
+            <div class="result-box">
+                <strong>📊 Результат:</strong>
+                Вы превратили продажи на Uzum в системный бизнес, умеете управлять рекламой, понимаете свои цифры и масштабируете прибыль.
+            </div>
+
+            <button class="btn btn-neon">Выбрать Продвинутый</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
