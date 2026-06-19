@@ -140,14 +140,17 @@
   .stat-num span { color: var(--orange); }
   .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
   @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+  
   .scroll-hint {
-    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 36px; left: 50%; transform: translate(-50%, 20px);
     display: flex; flex-direction: column; align-items: center; gap: 8px;
-    opacity: 0; animation: fadeUp 0.8s ease 1.5s forwards;
+    opacity: 0; animation: fadeUpScroll 0.8s ease 1.5s forwards;
   }
   .scroll-hint span { font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; }
-  .scroll-arrow { width: 20px; height: 20px; border-right: 1.5px solid var(--text-dim); border-bottom: 1.5px solid var(--text-dim); transform: rotate(45deg); animation: bounce 2s infinite; }
-  @keyframes bounce { 0%,100%{ transform:rotate(45deg) translateY(0);} 50%{ transform:rotate(45deg) translateY(6px);} }
+  .scroll-arrow { width: 20px; height: 20px; border-right: 1.5px solid var(--text-dim); border-bottom: 1.5px solid var(--text-dim); transform: rotate(45deg); animation: bounceScroll 2s infinite; }
+  
+  @keyframes fadeUpScroll { to { opacity:1; transform: translate(-50%, 0); } }
+  @keyframes bounceScroll { 0%,100%{ transform:rotate(45deg) translate(0, 0);} 50%{ transform:rotate(45deg) translate(5px, 5px);} }
 
   /* LAYOUT */
   .section-wrap { max-width: 1140px; margin: 0 auto; padding: 100px 40px; }
@@ -372,12 +375,15 @@
   .pain-card:nth-child(2) { transition-delay: 0.1s; }
   .pain-card:nth-child(3) { transition-delay: 0.2s; }
   .pain-card:nth-child(4) { transition-delay: 0.3s; }
+
   .pkg-card:nth-child(1) { transition-delay: 0s; }
   .pkg-card:nth-child(2) { transition-delay: 0.12s; }
   .pkg-card:nth-child(3) { transition-delay: 0.24s; }
+
   .sub-card:nth-child(1) { transition-delay: 0s; }
   .sub-card:nth-child(2) { transition-delay: 0.12s; }
   .sub-card:nth-child(3) { transition-delay: 0.24s; }
+
   .step:nth-child(1) { transition-delay: 0s; }
   .step:nth-child(2) { transition-delay: 0.1s; }
   .step:nth-child(3) { transition-delay: 0.2s; }
@@ -391,134 +397,73 @@
   }
   .hero-bg-image {
     position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background-image: var(--hero-bg-image);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+    background-image: var(--hero-bg-image); background-size: cover; background-position: center center; background-repeat: no-repeat;
   }
   /* Затемняющий оверлей поверх картинки */
   .hero-bg-image::after {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: linear-gradient(
       to bottom,
       rgba(12,12,14,0.72) 0%,
       rgba(12,12,14,0.58) 50%,
-      rgba(12,12,14,0.82) 100%
+      rgba(12,12,14,0.82) 100
     );
   }
   /* Когда картинка не задана — показываем placeholder-подсказку */
   .hero-bg-image.empty::before {
-    content: '🖼 Нажмите, чтобы задать фоновое изображение';
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: rgba(255,255,255,0.15);
-    border: 2px dashed rgba(255,255,255,0.08);
-    letter-spacing: 0.05em;
+    content: 'Фоновое изображение Hero (Задайте в CSS свойство --hero-bg-image)';
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.15); font-size: 13px; font-weight: 500; letter-spacing: 0.05em;
+    border: 2px dashed rgba(255,255,255,0.05); border-radius: 24px; margin: 20px; box-sizing: border-box;
   }
-  /* Все дочерние элементы hero поверх картинки */
-  .hero > *:not(.hero-bg-image):not(.hero-bg):not(.hero-gr) {
-    position: relative; z-index: 2;
-  }
-  .hero-bg, .hero-gr { z-index: 1; }
+  .hero-bg-image.empty::after { display: none; }
 
-  /* ===== CUSTOM DROPDOWN ===== */
-  .custom-select-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
+  /* Специфический выпадающий список для кастомного селекта Бюджета и Языка */
+  .custom-select-wrap { position: relative; width: 100%; }
+  .custom-select-btn {
+    width: 100%; padding: 14px 18px; background: var(--dark3); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text-dim); font-size: 15px; font-family: 'Inter', sans-serif;
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none;
+    transition: all 0.2s ease;
   }
-  /* Языковой дропдаун в навбаре */
-  .custom-select-wrap.lang-wrap .custom-select-btn {
-    background: var(--dark3); color: var(--text);
-    border: 1px solid var(--border); padding: 8px 34px 8px 14px;
-    border-radius: 8px; font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: 'Inter', sans-serif;
-    transition: border-color 0.2s ease; user-select: none;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap;
+  .custom-select-btn:hover { border-color: rgba(255,92,0,0.2); }
+  .custom-select-btn.selected { color: var(--text); }
+  .custom-select-btn::after {
+    content: ''; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 5px solid var(--text-muted); transition: transform 0.2s ease;
   }
-  .custom-select-wrap.lang-wrap .custom-select-btn:hover,
-  .custom-select-wrap.lang-wrap.open .custom-select-btn {
-    border-color: var(--border-bright);
-  }
-  /* Бюджетный дропдаун в форме */
-  .custom-select-wrap.budget-wrap {
-    display: flex; width: 100%;
-  }
-  .custom-select-wrap.budget-wrap .custom-select-btn {
-    width: 100%; padding: 14px 18px; background: var(--dark3);
-    border: 1px solid var(--border); border-radius: 12px;
-    color: var(--text-muted); font-size: 15px; font-family: 'Inter', sans-serif;
-    outline: none; transition: border-color 0.2s ease;
-    cursor: pointer; user-select: none;
-    display: flex; align-items: center; justify-content: space-between;
-    text-align: left;
-  }
-  .custom-select-wrap.budget-wrap .custom-select-btn.selected {
-    color: var(--text);
-  }
-  .custom-select-wrap.budget-wrap.open .custom-select-btn,
-  .custom-select-wrap.budget-wrap .custom-select-btn:hover {
-    border-color: var(--border-bright);
-  }
-  /* Стрелка */
-  .custom-select-arrow {
-    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-    pointer-events: none; display: flex; align-items: center;
-    transition: transform 0.2s ease;
-  }
-  .custom-select-wrap.open .custom-select-arrow {
-    transform: translateY(-50%) rotate(180deg);
-  }
-  .custom-select-arrow svg {
-    width: 14px; height: 14px; stroke: var(--text-muted); fill: none; stroke-width: 2.5;
-    display: block;
-  }
-  /* Выпадающий список */
+  .custom-select-wrap.open .custom-select-btn::after { transform: rotate(180deg); }
+  .custom-select-wrap.open .custom-select-btn { border-color: var(--border-bright); }
   .custom-select-list {
-    position: absolute; top: calc(100% + 6px);
-    min-width: 100%; width: max-content;
-    background: var(--dark3); border: 1px solid var(--border-bright);
-    border-radius: 12px; overflow: hidden;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-    z-index: 999;
-    opacity: 0; transform: translateY(-6px); pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--dark3);
+    border: 1px solid var(--border-bright); border-radius: 12px; max-height: 240px; overflow-y: auto;
+    z-index: 50; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 6px;
   }
-  .custom-select-wrap.lang-wrap .custom-select-list { right: 0; }
-  .custom-select-wrap.budget-wrap .custom-select-list { left: 0; right: 0; }
-  .custom-select-wrap.open .custom-select-list {
-    opacity: 1; transform: translateY(0); pointer-events: all;
-  }
+  .custom-select-wrap.open .custom-select-list { display: block; }
   .custom-select-option {
-    padding: 12px 18px; font-size: 14px; font-weight: 500;
-    color: var(--text-muted); cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
-    display: flex; align-items: center; gap: 10px;
-    white-space: nowrap;
+    padding: 12px 14px; color: var(--text-muted); font-size: 14px; border-radius: 8px;
+    cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; justify-content: space-between;
   }
-  .custom-select-option:hover { background: var(--dark4); color: var(--text); }
-  .custom-select-option.active {
-    background: var(--orange-dim); color: var(--text);
+  .custom-select-option:hover { background: rgba(255,92,0,0.08); color: var(--text); }
+  .custom-select-option.active { background: var(--orange); color: #fff; font-weight: 600; }
+
+  /* Навбарный кастомный языковой селект */
+  .nav-lang-wrap { position: relative; }
+  .nav-lang-btn {
+    background: var(--dark3); color: var(--text); border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none;
   }
-  .custom-select-option .opt-check {
-    width: 16px; height: 16px; flex-shrink: 0;
-    border-radius: 50%; border: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s ease;
+  .nav-lang-btn::after { content: ''; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid var(--text); }
+  .nav-lang-wrap.open .nav-lang-btn { border-color: var(--border-bright); }
+  .nav-lang-list {
+    position: absolute; top: calc(100% + 6px); right: 0; background: var(--dark3);
+    border: 1px solid var(--border); border-radius: 8px; width: 100px; display: none; padding: 4px; z-index: 110;
   }
-  .custom-select-option.active .opt-check {
-    background: var(--orange); border-color: var(--orange);
-  }
-  .custom-select-option.active .opt-check::after {
-    content: '';
-    width: 5px; height: 5px; border-radius: 50%; background: #fff;
-  }
-  /* Разделитель опций */
-  .custom-select-option + .custom-select-option {
-    border-top: 1px solid var(--border);
-  }
+  .nav-lang-wrap.open .nav-lang-list { display: block; }
+  .nav-lang-opt { padding: 8px 12px; font-size: 13px; font-weight: 500; color: var(--text-muted); border-radius: 6px; cursor: pointer; text-align: center; }
+  .nav-lang-opt:hover { background: rgba(255,92,0,0.08); color: var(--text); }
+  .nav-lang-opt.active { background: var(--orange); color: #fff; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -526,823 +471,705 @@
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 
-<!-- NAV -->
-<nav id="navbar">
-  <div class="nav-logo">U<span>-HUB</span></div>
+<nav>
+  <div class="nav-logo">U-<span>Hub</span></div>
   <div class="nav-right">
-    <!-- Кастомный выбор языка -->
-    <div class="custom-select-wrap lang-wrap" id="langDropWrap">
-      <div class="custom-select-btn" id="langDropBtn" onclick="toggleLangDrop()">
-        <span id="langDropLabel">RU</span>
-      </div>
-      <div class="custom-select-arrow">
-        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="custom-select-list" id="langDropList">
-        <div class="custom-select-option active" data-value="ru" onclick="pickLang('ru')">
-          <div class="opt-check"></div> RU — Русский
-        </div>
-        <div class="custom-select-option" data-value="uz" onclick="pickLang('uz')">
-          <div class="opt-check"></div> UZ — O'zbek
-        </div>
+    <div class="nav-lang-wrap" id="langDropWrap">
+      <div class="nav-lang-btn" id="langDropBtn">RU</div>
+      <div class="nav-lang-list">
+        <div class="nav-lang-opt active" onclick="changeLang('ru', this)">RU</div>
+        <div class="nav-lang-opt" onclick="changeLang('uz', this)">UZ</div>
       </div>
     </div>
-    <!-- Скрытый select для совместимости -->
-    <select id="langSelect" style="display:none;" onchange="changeLanguage(this.value)">
-      <option value="ru">RU</option>
-      <option value="uz">UZ</option>
-    </select>
-    <a href="courses.html" class="nav-courses" data-key="nav_courses">Курсы</a>
-    <a href="#form" class="nav-cta" data-key="nav_cta">Бесплатная консультация</a>
+    <a href="#packages" class="nav-courses" data-key="nav_pkg">Тарифы</a>
+    <a href="#form" class="nav-cta" data-key="nav_cta">Начать бизнес</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <!-- Фоновая картинка: задайте URL в CSS-переменной --hero-bg-image внутри .hero -->
-  <!-- Или прямо здесь через атрибут style: style="background-image:url('...')" -->
   <div class="hero-bg-image empty" id="heroBgImage"></div>
   <div class="hero-bg"></div>
   <div class="hero-gr"></div>
-  <div class="hero-badge" data-key="hero_badge">Комплексный сервис для селлеров в Узбекистане</div>
-  <h1 data-key="hero_h1">Запустим ваш прибыльный бизнес на <span>Uzum Market</span> под ключ</h1>
-  <p class="hero-sub" data-key="hero_sub">От аналитики ниши и обучения закупу до профессиональной инфографики, маркировки на нашем складе в Ташкенте и вывода карточек в ТОП.</p>
+  
+  <div class="hero-badge" data-key="hero_badge">Официальный технологический партнер Uzum Market</div>
+  <h1 id="heroTitle">Запустите свой бизнес на <span>Uzum Market</span> под ключ</h1>
+  <p class="hero-sub" data-key="hero_sub">Полный цикл вывода локальных брендов и селлеров на маркетплейс №1 в Узбекистане. От открытия фирмы до первых продаж с гарантией результата.</p>
+  
   <div class="hero-btns">
-    <a href="#form" class="btn-primary" data-key="hero_btn_primary">🚀 Получить бесплатную консультацию</a>
-    <a href="#packages" class="btn-secondary" data-key="hero_btn_secondary">Посмотреть пакеты</a>
+    <a href="#form" class="btn-primary">
+      <span data-key="hero_btn_primary">Оставить заявку</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+    <a href="#calc" class="btn-secondary" data-key="hero_btn_secondary">Рассчитать стоимость</a>
   </div>
+
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num">80<span>%</span></div>
-      <div class="stat-label" data-key="stat_1">новичков теряют деньги<br>без правильного старта</div>
-    </div>
-    <div class="stat" style="border-left:1px solid rgba(255,255,255,0.08); border-right:1px solid rgba(255,255,255,0.08); padding:0 48px;">
-      <div class="stat-num"><span>15</span> <span style="font-family:'Inter'; font-size:28px; font-weight:800;" data-key="stat_2_unit">мин</span></div>
-      <div class="stat-label" data-key="stat_2">до первого звонка<br>от нашего менеджера</div>
+      <div class="stat-num">&gt;150</div>
+      <div class="stat-label" data-key="stat_1">успешных магазинов<br>запущено</div>
     </div>
     <div class="stat">
-      <div class="stat-num"><span>3</span> <span style="font-family:'Inter'; font-size:28px; font-weight:800;" data-key="stat_3_unit">пакета</span></div>
-      <div class="stat-label" data-key="stat_3">под любой бюджет<br>и цель</div>
+      <div class="stat-num"><span>$</span>3.2М+</div>
+      <div class="stat-label" data-key="stat_2">суммарный оборот<br>наших селлеров</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24<span>ч</span></div>
+      <div class="stat-label" data-key="stat_3">среднее время сборки<br>и поставки на склад</div>
     </div>
   </div>
+
   <div class="scroll-hint">
     <span data-key="scroll_hint">Листайте</span>
     <div class="scroll-arrow"></div>
   </div>
 </section>
 
-<div class="divider"></div>
+<section class="section-wrap" id="problems">
+  <div class="eyebrow" data-key="pains_eyebrow">Реальность маркетплейсов</div>
+  <div class="section-title" data-key="pains_title">Почему 80% новичков теряют бюджет?</div>
+  <div class="section-sub" data-key="pains_sub">Выход на Uzum сегодня — это не просто «купить товар и выложить фото». Это жесткая конкуренция и сложная операционная система.</div>
 
-<!-- PAIN POINTS -->
-<div class="section-wrap">
-  <div class="eyebrow" data-key="pains_eyebrow">Кому мы помогаем</div>
-  <h2 class="section-title" data-key="pains_title">Почему 80% новичков теряют деньги в первые 2 месяца?</h2>
-  <p class="section-sub" data-key="pains_sub">Узнаёте себя? Мы уже решили эти проблемы для десятков продавцов.</p>
   <div class="pains-grid">
-    <div class="pain-card">
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <div class="pain-problem" data-key="pain1_prob">«Не знаю, где брать товар»</div>
-      <div class="pain-solution" data-key="pain1_sol">Мы проведём аналитику рынка, подберём маржинальные ниши и покажем, как выгодно закупаться <strong>на фабриках Китая</strong> или на локальных рынках (Абу Сахий/ТТЗ).</div>
+    <div class="pain-card scroll-anim">
+      <svg class="v-icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l-7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      <div class="pain-problem" data-key="pain_p1">Брак и проблемы с Китаем</div>
+      <div class="pain-solution" data-key="pain_s1">Поставщики присылают не тот цвет, путают размеры или отправляют скрытый брак. <strong>Мы проверяем каждую единицу товара на нашем складе в Китае.</strong></div>
     </div>
-    <div class="pain-card">
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-      <div class="pain-problem" data-key="pain2_prob">«Боюсь ошибиться при первом заказе»</div>
-      <div class="pain-solution" data-key="pain2_sol">Пошагово обучим работе с <strong>1688/Alibaba</strong> и передадим контакты проверенных карго-компаний с реальными отзывами.</div>
+    <div class="pain-card scroll-anim">
+      <svg class="v-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      <div class="pain-problem" data-key="pain_p2">Жесткая модерация и блокировки</div>
+      <div class="pain-solution" data-key="pain_s2">Неправильная маркировка, отсутствие штрихкодов или ошибки в накладных ведут к отказам в приемке. <strong>Мы маркируем товар строго по регламенту Uzum.</strong></div>
     </div>
-    <div class="pain-card">
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-      <div class="pain-problem" data-key="pain3_prob">«Устали упаковывать коробки дома»</div>
-      <div class="pain-solution" data-key="pain3_sol">Наш <strong>фулфилмент-центр в Ташкенте</strong> примет товар, проверит на брак, упакует и сам отвезёт на склад Uzum.</div>
+    <div class="pain-card scroll-anim">
+      <svg class="v-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+      <div class="pain-problem" data-key="pain_p3">Слив бюджета на рекламу</div>
+      <div class="pain-solution" data-key="pain_s3">Внутреннее продвижение съедает деньги, а карточка товара не поднимается в поиске из-за плохой SEO-оптимизации. <strong>Выводим карточки в ТОП по алгоритмам.</strong></div>
     </div>
-    <div class="pain-card">
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/></svg>
-      <div class="pain-problem" data-key="pain4_prob">«Карточки есть, но продаж нет»</div>
-      <div class="pain-solution" data-key="pain4_sol">Сделаем <strong>мощное SEO на русском и узбекском</strong>, настроим рекламу и выведем карточки в ТОП поиска Uzum.</div>
+    <div class="pain-card scroll-anim">
+      <svg class="v-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div class="pain-problem" data-key="pain_p4">Заморозка денег в кассовом разрыве</div>
+      <div class="pain-solution" data-key="pain_s4">Товар закончился, новые позиции еще в пути, а конкуренты уже забрали ваши позиции. <strong>Настраиваем бесперебойные цепочки поставок.</strong></div>
     </div>
   </div>
-</div>
+</section>
 
 <div class="divider"></div>
 
-<!-- PACKAGES -->
-<div class="section-wrap" id="packages">
-  <div class="eyebrow" data-key="pkg_eyebrow">Пакеты под ключ</div>
-  <h2 class="section-title" data-key="pkg_title">Выберите формат быстрого старта</h2>
-  <p class="section-sub" data-key="pkg_sub">Три пакета под любой бюджет и уровень опыта.</p>
+<section class="section-wrap" id="packages">
+  <div class="eyebrow" data-key="pkg_eyebrow">Комплексные пакеты</div>
+  <div class="section-title" data-key="pkg_title">Готовые решения для вашего старта</div>
+  <div class="section-sub" data-key="pkg_sub">Выберите формат участия: от базового консалтинга до полного делегирования всех процессов нашей команде экспертов.</div>
+
   <div class="packages-grid">
-
-    <div class="pkg-card">
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-      <div class="pkg-name" data-key="p1_name">Тест-Драйв</div>
+    <div class="pkg-card scroll-anim">
+      <div class="pkg-name" data-key="pkg_n1">Базовый старт</div>
       <div class="price-container">
-        <div class="pkg-price-old">1 490 000 сум</div>
-        <div class="pkg-price">990 000 сум</div>
+        <span class="pkg-price-old">$450</span>
+        <span class="pkg-price">$290</span>
       </div>
-      <div class="pkg-price-note" data-key="p1_note">* Расходные материалы для упаковки рассчитываются индивидуально под ваш товар</div>
+      <div class="pkg-price-note" data-key="pkg_note1">Разовый платеж за настройку фундамента</div>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
-        <li data-key="p1_f1">Регистрация кабинета продавца и настройка ЭДО (Didox)</li>
-        <li data-key="p1_f2">Создание и SEO-оптимизация до 5 карточек товара</li>
-        <li data-key="p1_f3">Базовая инфографика — по 3 слайда на каждый товар</li>
+        <li data-key="pkg_f1_1">Регистрация ООО/ЧП для маркетплейса</li>
+        <li data-key="pkg_f1_2">Открытие расчетного счета и подключение ЭЦП</li>
+        <li data-key="pkg_f1_3">Регистрация личного кабинета продавца</li>
+        <li data-key="pkg_f1_4">Базовый анализ 3 перспективных ниш</li>
+        <li data-key="pkg_f1_5">Гайды по работе со складом Uzum</li>
       </ul>
-      <div class="pkg-result">
-        <strong data-key="pkg_res_label">Результат</strong>
-        <span data-key="p1_res">Магазин готов к работе, товары прошли модерацию.</span>
-      </div>
-      <button class="pkg-btn pkg-btn-outline" onclick="scrollToForm()" data-key="pkg_btn">Оставить заявку</button>
+      <div class="pkg-result"><strong data-key="pkg_res_title">Результат:</strong><span data-key="pkg_res1">Юридически чистый бизнес, готовый к первой поставке товара.</span></div>
+      <button class="pkg-btn pkg-btn-outline" onclick="selectPkg('Базовый старт', 290)" data-key="pkg_btn">Выбрать тариф</button>
     </div>
 
-    <div class="pkg-card hit">
-      <div class="pkg-badge" data-key="hit_badge">Хит продаж</div>
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-      <div class="pkg-name" data-key="p2_name">Быстрый Старт</div>
+    <div class="pkg-card hit scroll-anim">
+      <div class="pkg-badge" data-key="pkg_badge_hit">Популярно</div>
+      <div class="pkg-name" data-key="pkg_n2">Запуск под ключ</div>
       <div class="price-container">
-        <div class="pkg-price-old">4 990 000 сум</div>
-        <div class="pkg-price">3 490 000 сум</div>
+        <span class="pkg-price-old">$1,200</span>
+        <span class="pkg-price">$790</span>
       </div>
-      <div class="pkg-price-note" data-key="p2_note">+ расходы на доставку на склад Uzum<br>* Расходные материалы рассчитываются индивидуально</div>
+      <div class="pkg-price-note" data-key="pkg_note2">Идеально для инвесторов и предпринимателей</div>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
-        <li data-key="p2_f1">Аналитика: подбор 3 прибыльных товаров под ваш бюджет</li>
-        <li data-key="p2_f2">До 20 SEO-карточек (RU/UZ) + премиум-инфографика</li>
-        <li data-key="p2_f3">Фулфилмент: приёмка, проверка, маркировка и упаковка первой партии до 150 ед.</li>
-        <li data-key="p2_f4">Доставка собранной партии на склад Uzum Market</li>
-        <li data-key="p2_f5">Настройка внутренней рекламы на Uzum на первый месяц</li>
+        <li data-key="pkg_f2_1">Всё из пакета «Базовый старт»</li>
+        <li data-key="pkg_f2_2">Поиск и выкуп прибыльного товара в Китае</li>
+        <li data-key="pkg_f2_3">Организация логистики до Ташкента</li>
+        <li data-key="pkg_f2_4">Профессиональная инфографика и SEO для 10 карточек</li>
+        <li data-key="pkg_f2_5">Первая маркировка и доставка партии на склад Uzum</li>
+        <li data-key="pkg_f2_6">Настройка и ведение рекламы (1 месяц)</li>
       </ul>
-      <div class="pkg-result">
-        <strong data-key="pkg_res_label">Результат</strong>
-        <span data-key="p2_res">Полностью готовый бизнес. Товар на складе Uzum, пошли первые продажи.</span>
-      </div>
-      <button class="pkg-btn pkg-btn-primary" onclick="scrollToForm()" data-key="pkg_btn">Оставить заявку</button>
+      <div class="pkg-result"><strong data-key="pkg_res_title">Результат:</strong><span data-key="pkg_res2">Действующий магазин с первыми продажами и выведенными в топ карточками.</span></div>
+      <button class="pkg-btn pkg-btn-primary" onclick="selectPkg('Запуск под ключ', 790)" data-key="pkg_btn">Выбрать тариф</button>
     </div>
 
-    <div class="pkg-card">
-      <div class="pkg-badge" style="background: linear-gradient(90deg, #a05500, #d97700);" data-key="prem_badge">Премиум</div>
-      <svg class="v-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-      <div class="pkg-name" data-key="p3_name">Максимум + Китай</div>
+    <div class="pkg-card scroll-anim">
+      <div class="pkg-name" data-key="pkg_n3">Бизнес-масштаб</div>
       <div class="price-container">
-        <div class="pkg-price-old">9 990 000 сум</div>
-        <div class="pkg-price">6 990 000 сум</div>
+        <span class="pkg-price-old">$2,100</span>
+        <span class="pkg-price">$1,450</span>
       </div>
-      <div class="pkg-price-note" data-key="p3_note">* Расходные материалы рассчитываются индивидуально под ваш товар</div>
+      <div class="pkg-price-note" data-key="pkg_note3">Для крупных брендов и производителей</div>
       <div class="pkg-divider"></div>
       <ul class="pkg-features">
-        <li data-key="p3_f1">Модуль «Секреты Китая»: 1688/Alibaba, проверка поставщиков, база карго-компаний</li>
-        <li data-key="p3_f2">Помощь в разработке бренда: нейминг и логотип</li>
-        <li data-key="p3_f3">До 50 SEO-карточек + организация фотосессии в Ташкенте</li>
-        <li data-key="p3_f4">Фулфилмент: полная выбраковка, переупаковка и маркировка до 500 ед.</li>
-        <li data-key="p3_f5">Контроль сдачи на склад Uzum + стратегия вывода в ТОП</li>
+        <li data-key="pkg_f3_1">Всё из пакета «Запуск под ключ»</li>
+        <li data-key="pkg_f3_2">Интеграция с вашей системой 1С / МойСклад</li>
+        <li data-key="pkg_f3_3">Инфографика и SEO продвижение для 50+ товаров</li>
+        <li data-key="pkg_f3_4">Разработка индивидуальной стратегии бренда</li>
+        <li data-key="pkg_f3_5">Закрепленный аккаунт-менеджер на 3 месяца</li>
+        <li data-key="pkg_f3_6">Обучение ваших сотрудников операционной работе</li>
       </ul>
-      <div class="pkg-result">
-        <strong data-key="pkg_res_label">Результат</strong>
-        <span data-key="p3_res">Умеете закупать в Китае выгодно. Вся операционка в Ташкенте настроена под ключ.</span>
-      </div>
-      <button class="pkg-btn pkg-btn-outline" onclick="scrollToForm()" data-key="pkg_btn">Оставить заявку</button>
+      <div class="pkg-result"><strong data-key="pkg_res_title">Результат:</strong><span data-key="pkg_res3">Полноценный цифровой филиал вашего производства с автоматизированным управлением.</span></div>
+      <button class="pkg-btn pkg-btn-outline" onclick="selectPkg('Бизнес-масштаб', 1450)" data-key="pkg_btn">Выбрать тариф</button>
     </div>
-
   </div>
+</section>
 
-  <!-- CALCULATOR -->
-  <div class="calc-container" id="calculatorBlock">
+<div class="divider"></div>
+
+<section class="section-wrap" id="calc">
+  <div class="eyebrow" data-key="calc_eyebrow">Гибкий конфигуратор</div>
+  <div class="section-title" data-key="calc_title">Рассчитайте персональный тариф</div>
+  <div class="section-sub" data-key="calc_sub">Выберите только те услуги, которые необходимы вашему бизнесу прямо сейчас. Стоимость и скидка пересчитаются автоматически.</div>
+
+  <div class="calc-container scroll-anim">
     <div class="calc-options">
-      <h3 style="font-family:'Unbounded'; font-size:20px;" data-key="calc_title">Калькулятор стоимости</h3>
       <div class="calc-group">
-        <label class="calc-label" data-key="calc_base_pkg">Выберите базовый пакет:</label>
-        <div class="ui-chips" id="pkgChips">
-          <div class="chip" data-value="990000" onclick="selectChip('pkg', this)">
-            <span data-key="p1_name">Тест-Драйв</span>
-            <span class="chip-price">990 000</span>
-          </div>
-          <div class="chip active" data-value="3490000" onclick="selectChip('pkg', this)">
-            <span data-key="p2_name">Быстрый Старт</span>
-            <span class="chip-price">3 490 000</span>
-          </div>
-          <div class="chip" data-value="6990000" onclick="selectChip('pkg', this)">
-            <span data-key="p3_name">Максимум + Китай</span>
-            <span class="chip-price">6 990 000</span>
-          </div>
+        <div class="calc-label" data-key="calc_g1">1. Категория товаров (Сложность анализа и SEO)</div>
+        <div class="ui-chips">
+          <div class="chip active" onclick="setCategory(0, this)"><span data-key="calc_cat1">Одежда и обувь</span><span class="chip-price">+$150</span></div>
+          <div class="chip" onclick="setCategory(1, this)"><span data-key="calc_cat2">Электроника и дома</span><span class="chip-price">+$120</span></div>
+          <div class="chip" onclick="setCategory(2, this)"><span data-key="calc_cat3">Красота и аксессуары</span><span class="chip-price">+$80</span></div>
         </div>
       </div>
+      
       <div class="calc-group">
-        <label class="calc-label" data-key="calc_cards_count">Дополнительные карточки товара (+35 000 сум/ед):</label>
+        <div class="calc-label" data-key="calc_g2">2. Количество уникальных товаров (SKU): <span id="skuCountText">15</span></div>
         <div class="range-box">
-          <input type="range" id="cardSlider" class="range-slider" min="0" max="100" value="0" oninput="updateSliderVal(this.value)">
-          <div class="range-val" id="sliderVal">0 шт</div>
+          <input type="range" class="range-slider" id="skuRange" min="1" max="100" value="15" oninput="updateSkuCalc(this.value)">
+          <div class="range-val" id="skuPriceVal">+$150</div>
         </div>
       </div>
-      <div class="calc-group" style="margin-top: 5px;">
-        <div class="calc-checkbox-card" id="supportCard" onclick="toggleSupportCard()">
-          <input type="checkbox" class="calc-checkbox" id="calcSupport">
-          <span data-key="calc_add_support" style="font-size:14px; font-weight:500;">Добавить 1 месяц сопровождения «Лайт» (+1 490 000 сум)</span>
-        </div>
-      </div>
-    </div>
-    <div class="calc-result-box">
-      <div class="calc-res-title" data-key="calc_total_label">Итоговая стоимость</div>
-      <div class="calc-price-old" id="totalPriceOld">4 990 000 сум</div>
-      <div class="calc-price-new" id="totalPriceNew">3 490 000 сум</div>
-      <button class="pkg-btn pkg-btn-primary" onclick="applyCalcToForm()" data-key="calc_btn">Заказать по расчету</button>
-    </div>
-  </div>
-</div>
 
-<div class="divider"></div>
-
-<!-- РАЗОВЫЕ УСЛУГИ -->
-<div class="section-wrap" id="services">
-  <div class="eyebrow" data-key="srv_eyebrow">Точечная помощь</div>
-  <h2 class="section-title" data-key="srv_title">Нужна конкретная услуга?</h2>
-  <p class="section-sub" data-key="srv_sub">Не готовы к полному пакету? Закажите только то, что нужно прямо сейчас.</p>
-  <div class="srv-grid">
-
-    <div class="srv-card">
-      <div class="srv-icon">
-        <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      </div>
-      <div class="srv-body">
-        <div class="srv-name" data-key="srv1_name">SEO-карточка товара</div>
-        <div class="srv-desc" data-key="srv1_desc">Продающее название, описание на RU/UZ и заполнение характеристик под алгоритм Uzum.</div>
-      </div>
-      <div class="srv-right">
-        <div class="srv-price">35 000 сум<em data-key="srv1_unit">за 1 карточку</em></div>
-        <button class="srv-btn" onclick="orderService('SEO-карточка товара', '35 000 сум')" data-key="srv_order_btn">Заказать</button>
-      </div>
-    </div>
-
-    <div class="srv-card">
-      <div class="srv-icon">
-        <svg viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-      </div>
-      <div class="srv-body">
-        <div class="srv-name" data-key="srv2_name">Дизайн инфографики</div>
-        <div class="srv-desc" data-key="srv2_desc">3–5 слайдов rich-контента для одного товара. Пробиваем баннерную слепоту и повышаем CTR.</div>
-      </div>
-      <div class="srv-right">
-        <div class="srv-price">150 000 сум<em data-key="srv2_unit">за 1 товар</em></div>
-        <button class="srv-btn" onclick="orderService('Дизайн инфографики', '150 000 сум')" data-key="srv_order_btn">Заказать</button>
-      </div>
-    </div>
-
-    <div class="srv-card">
-      <div class="srv-icon">
-        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-      </div>
-      <div class="srv-body">
-        <div class="srv-name" data-key="srv3_name">Глубокий аудит магазина</div>
-        <div class="srv-desc" data-key="srv3_desc">Анализ карточек, рекламы и цен. PDF-отчёт с конкретными ошибками и планом исправления.</div>
-      </div>
-      <div class="srv-right">
-        <div class="srv-price">490 000 сум<em data-key="srv3_unit">разово</em></div>
-        <button class="srv-btn" onclick="orderService('Аудит магазина', '490 000 сум')" data-key="srv_order_btn">Заказать</button>
-      </div>
-    </div>
-
-    <div class="srv-card">
-      <div class="srv-icon">
-        <svg viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-      </div>
-      <div class="srv-body">
-        <div class="srv-name" data-key="srv4_name">Консультация 1:1 (60 мин)</div>
-        <div class="srv-desc" data-key="srv4_desc">Ответы на вопросы в Zoom или Telegram: ниша, фулфилмент, налоги, реклама — без воды.</div>
-      </div>
-      <div class="srv-right">
-        <div class="srv-price">200 000 сум<em data-key="srv4_unit">за сессию</em></div>
-        <button class="srv-btn" onclick="orderService('Консультация 1:1', '200 000 сум')" data-key="srv_order_btn">Заказать</button>
-      </div>
-    </div>
-
-    <div class="srv-card">
-      <div class="srv-icon">
-        <svg viewBox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      </div>
-      <div class="srv-body">
-        <div class="srv-name" data-key="srv5_name">Закуп из Китая под ключ</div>
-        <div class="srv-desc" data-key="srv5_desc">Найдём товар на 1688, проверим фабрику, просчитаем юнит-экономику и организуем карго до Ташкента.</div>
-      </div>
-      <div class="srv-right">
-        <div class="srv-price">от 350 000 сум<em data-key="srv5_unit">за позицию</em></div>
-        <button class="srv-btn" onclick="orderService('Закуп из Китая под ключ', 'от 350 000 сум')" data-key="srv_order_btn">Заказать</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- SUBSCRIPTIONS -->
-<div class="section-wrap">
-  <div class="eyebrow" data-key="subs_eyebrow">Ежемесячное сопровождение</div>
-  <h2 class="section-title" data-key="subs_title">Передайте рутину экспертам</h2>
-  <p class="section-sub" data-key="subs_sub">Ведите бизнес — мы берём на себя всю операционку вашего магазина.</p>
-  <div class="subs-grid">
-    <div class="sub-card">
-      <div class="sub-tier" data-key="s1_tier">Базовый</div>
-      <div class="sub-name" data-key="s1_name">Лайт-Менеджер</div>
-      <div class="sub-price">1 490 000 <em data-key="sub_unit">сум/мес</em></div>
-      <div class="sub-desc" data-key="s1_desc">Ответы на отзывы, контроль остатков на Uzum, участие в акциях. Всего 15 минут вашего времени в день — мы делаем остальное.</div>
-    </div>
-    <div class="sub-card" style="border-color: var(--border-bright);">
-      <div class="sub-tier" data-key="s2_tier">Оптимальный</div>
-      <div class="sub-name" data-key="s2_name">Управление & Маркетинг</div>
-      <div class="sub-price">2 990 000 <em data-key="sub_unit">сум/мес</em></div>
-      <div class="sub-desc" data-key="s2_desc">Полное ведение + оптимизация рекламных ставок, еженедельная аналитика продаж, оформление накладных и таймслотов на склад Uzum.</div>
-    </div>
-    <div class="sub-card">
-      <div class="sub-tier" data-key="s3_tier">Максимальный</div>
-      <div class="sub-name" data-key="s3_name">Полный аутсорсинг</div>
-      <div class="sub-price">4 990 000 <em data-key="sub_unit">сум/мес</em></div>
-      <div class="sub-desc" data-key="s3_desc">Полная замена штата сотрудников. Рассчитаем, когда товар заканчивается, и дадим точную отмашку: «Пора докупать X единиц». Физическую сборку делают наши сотрудники автоматически.<br><br><small style="font-size:11px; opacity:0.6;" data-key="s3_small">+ сдельная оплата за физический фулфилмент</small></div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- STEPS -->
-<div class="section-wrap">
-  <div class="eyebrow" data-key="steps_eyebrow">Как всё устроено</div>
-  <h2 class="section-title" data-key="steps_title">4 шага до первых продаж</h2>
-  <p class="section-sub" data-key="steps_sub">Простой и понятный процесс от заявки до реального дохода.</p>
-  <div class="steps-row">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-title" data-key="st1_title">Заявка и аудит</div>
-      <div class="step-text" data-key="st1_text">Созваниваемся и подбираем стратегию под ваш бюджет и нишу.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-title" data-key="st2_title">Товар и контент</div>
-      <div class="step-text" data-key="st2_text">Вы закупаете товар — мы параллельно готовим SEO-тексты и дизайн.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-title" data-key="st3_title">Фулфилмент</div>
-      <div class="step-text" data-key="st3_text">Привозите товар к нам — проверяем, пакуем, маркируем и везём на Uzum.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-title" data-key="st4_title">Продажи</div>
-      <div class="step-text" data-key="st4_text">Включаем рекламу, выводим в ТОП и передаём готовый работающий кабинет.</div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- FORM -->
-<div class="form-outer" id="form">
-  <div class="form-section">
-    <div class="eyebrow" style="margin-bottom:12px;" data-key="f_eyebrow">Старт бесплатно</div>
-    <h2 class="section-title" style="margin-bottom:12px;" data-key="f_title">Готовы запустить бизнес на Uzum?</h2>
-    <p style="font-size:16px; color:var(--text-muted); max-width:520px; margin:0 auto; line-height:1.7;" data-key="f_sub">
-      Наш менеджер свяжется с вами в течение <strong style="color:var(--text);" id="f_sub_bold">15 минут</strong>, ответит на вопросы и проведёт базовый аудит вашей ниши.
-    </p>
-    <div class="form-grid">
-      <div>
-        <label class="form-label" for="fname" data-key="label_name">Ваше имя</label>
-        <input type="text" id="fname" class="form-input" placeholder="Аскар">
-      </div>
-      <div>
-        <label class="form-label" for="phone" data-key="label_phone">Номер телефона</label>
-        <input type="tel" id="phone" class="form-input" placeholder="+998 90 123 45 67">
-      </div>
-      <div style="grid-column: 1 / -1;">
-        <label class="form-label" data-key="label_contact">Удобный способ связи</label>
-        <div class="radio-group">
-          <label class="radio-label active" id="rl-call">
-            <input type="radio" name="contact" value="call" checked>
-            <span data-key="radio_call">📞 Позвонить</span>
-          </label>
-          <label class="radio-label" id="rl-tg">
-            <input type="radio" name="contact" value="tg">
-            <span data-key="radio_tg">✈️ Написать в Telegram</span>
-          </label>
-        </div>
-      </div>
-      <div style="grid-column: 1 / -1;">
-        <label class="form-label" for="budget" data-key="label_budget">Бюджет на закупку товара</label>
-        <!-- Кастомный дропдаун бюджета -->
-        <div class="custom-select-wrap budget-wrap" id="budgetDropWrap">
-          <div class="custom-select-btn" id="budgetDropBtn" onclick="toggleBudgetDrop()">
-            <span id="budgetDropLabel" data-key="opt_b0">Выберите диапазон</span>
+      <div class="calc-group">
+        <div class="calc-label" data-key="calc_g3">3. Необходимая инфраструктура и опции</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
+          <div class="calc-checkbox-card active" onclick="toggleOpt(0, this)">
+            <input type="checkbox" class="calc-checkbox" checked onclick="event.stopPropagation();">
+            <span data-key="calc_opt1">Регистрация юрлица и ЭЦП (+$100)</span>
           </div>
-          <div class="custom-select-arrow">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="calc-checkbox-card" onclick="toggleOpt(1, this)">
+            <input type="checkbox" class="calc-checkbox" onclick="event.stopPropagation();">
+            <span data-key="calc_opt2">Поиск поставщика в КНР (+$200)</span>
+          </div>
+          <div class="calc-checkbox-card" onclick="toggleOpt(2, this)">
+            <input type="checkbox" class="calc-checkbox" onclick="event.stopPropagation();">
+            <span data-key="calc_opt3">Фотосессия и контент (+$180)</span>
+          </div>
+          <div class="calc-checkbox-card" onclick="toggleOpt(3, this)">
+            <input type="checkbox" class="calc-checkbox" onclick="event.stopPropagation();">
+            <span data-key="calc_opt4">Настройка интеграции 1С (+$350)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-result-box">
+      <div class="calc-res-title" data-key="calc_res_t">Предварительный расчет</div>
+      <div class="calc-price-old" id="calcOldPrice">$510</div>
+      <div class="calc-price-new" id="calcNewPrice">$400</div>
+      <button class="pkg-btn pkg-btn-primary" onclick="applyCalcToForm()" data-key="calc_btn_apply">Закрепить стоимость</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section-wrap" id="services">
+  <div class="eyebrow" data-key="srv_eyebrow">Отдельные сервисы</div>
+  <div class="section-title" data-key="srv_title">Точечная помощь вашему магазину</div>
+  <div class="section-sub" data-key="srv_sub">Вам не обязательно покупать целый пакет. Вы можете заказать конкретную услугу для усиления текущих продаж.</div>
+
+  <div class="srv-grid">
+    <div class="srv-card scroll-anim">
+      <div class="srv-icon">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1-2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+      </div>
+      <div class="srv-body">
+        <div class="srv-name" data-key="srv_n1">Сборная фотосессия товаров в Ташкенте</div>
+        <div class="srv-desc" data-key="srv_d1">Профессиональные фото на моделях и циклораме, инфографика, соответствующая правилам Uzum. Без переплат за аренду студии.</div>
+      </div>
+      <div class="srv-right">
+        <div class="srv-price">$15 <em>/ SKU</em></div>
+        <button class="srv-btn" onclick="selectSrv('Сборная фотосессия', 15)" data-key="srv_order_btn">Заказать</button>
+      </div>
+    </div>
+
+    <div class="srv-card scroll-anim">
+      <div class="srv-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      </div>
+      <div class="srv-body">
+        <div class="srv-name" data-key="srv_n2">SEO-оптимизация и аудит карточек</div>
+        <div class="srv-desc" data-key="srv_d2">Пересобираем семантическое ядро, внедряем высокочастотные поисковые ключи в заголовки и описания для роста органических показов.</div>
+      </div>
+      <div class="srv-right">
+        <div class="srv-price">$40 <em>/ 5 карточек</em></div>
+        <button class="srv-btn" onclick="selectSrv('SEO-оптимизация', 40)" data-key="srv_order_btn">Заказать</button>
+      </div>
+    </div>
+
+    <div class="srv-card scroll-anim">
+      <div class="srv-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+      </div>
+      <div class="srv-body">
+        <div class="srv-name" data-key="srv_n3">Услуги фулфилмента и маркировки</div>
+        <div class="srv-desc" data-key="srv_d3">Заберем ваш товар от карго, проверим на брак, наклеим термоэтикетки со штрихкодами, упакуем по правилам и сдадим на склад Uzum.</div>
+      </div>
+      <div class="srv-right">
+        <div class="srv-price">от $0.12 <em>/ шт</em></div>
+        <button class="srv-btn" onclick="selectSrv('Фулфилмент/Маркировка', 0.12)" data-key="srv_order_btn">Заказать</button>
+      </div>
+    </div>
+
+    <div class="srv-card scroll-anim">
+      <div class="srv-icon">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+      </div>
+      <div class="srv-body">
+        <div class="srv-name" data-key="srv_n4">Сертификация и отказные письма</div>
+        <div class="srv-desc" data-key="srv_d4">Оформление деклараций соответствия, протоколов испытаний и отказных писем для легальной торговли брендами на территории РУз.</div>
+      </div>
+      <div class="srv-right">
+        <div class="srv-price">от $90 <em>/ док</em></div>
+        <button class="srv-btn" onclick="selectSrv('Сертификация', 90)" data-key="srv_order_btn">Заказать</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section-wrap" id="subs">
+  <div class="eyebrow" data-key="sub_eyebrow">Регулярное сопровождение</div>
+  <div class="section-title" data-key="sub_title">Аутсорсинг личного кабинета</div>
+  <div class="section-sub" data-key="sub_sub">Для тех, кто хочет инвестировать средства, но не имеет времени заниматься ежедневной операционной рутиной и контролем склада.</div>
+
+  <div class="subs-grid">
+    <div class="sub-card scroll-anim">
+      <div class="sub-tier" data-key="sub_t1">Ассистент</div>
+      <div class="sub-name" data-key="sub_n1">Поддержка кабинета</div>
+      <div class="sub-price">$150 <em>/ мес</em></div>
+      <div class="sub-desc" data-key="sub_d1">Мониторинг остатков на складе, своевременное создание накладных, ответы на отзывы и вопросы покупателей, контроль цен.</div>
+    </div>
+    <div class="sub-card scroll-anim" style="border-color: var(--border-bright);">
+      <div class="sub-tier" data-key="sub_t2">Трафик</div>
+      <div class="sub-name" data-key="sub_n2">Управление продажами</div>
+      <div class="sub-price">$280 <em>/ мес</em></div>
+      <div class="sub-desc" data-key="sub_d2">Полное ведение внутренней рекламы, участие в масштабных распродажах Uzum Market, аналитика конкурентов, еженедельная отчетность по ROI.</div>
+    </div>
+    <div class="sub-card scroll-anim">
+      <div class="sub-tier" data-key="sub_t3">Максимум</div>
+      <div class="sub-name" data-key="sub_n3">Удаленный директор</div>
+      <div class="sub-price">$450 <em>/ мес</em></div>
+      <div class="sub-desc" data-key="sub_d3">Комплексное управление вашим брендом, оптимизация оборачиваемости капитала, масштабирование матрицы SKU, защита от демпинга.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section-wrap" id="steps">
+  <div class="eyebrow" data-key="step_eyebrow">Процесс работы</div>
+  <div class="section-title" data-key="step_title">4 шага до первой прибыли</div>
+  <div class="section-sub" data-key="step_sub">Мы выстроили прозрачную пошаговую систему взаимодействия. Вы всегда знаете, на каком этапе находится ваш проект.</div>
+
+  <div class="steps-row">
+    <div class="step scroll-anim">
+      <div class="step-num">01</div>
+      <div class="step-title" data-key="step_t1">Анализ и стратегия</div>
+      <div class="step-text" data-key="step_tx1">Анализируем ваш бюджет, подбираем оптимальную товарную матрицу с высокой маржинальностью.</div>
+    </div>
+    <div class="step scroll-anim">
+      <div class="step-num">02</div>
+      <div class="step-title" data-key="step_t2">Договор и подготовка</div>
+      <div class="step-text" data-key="step_tx2">Регистрируем фирму, открываем кабинеты, закупаем товар в Китае или у локальных фабрик.</div>
+    </div>
+    <div class="step scroll-anim">
+      <div class="step-num">03</div>
+      <div class="step-title" data-key="step_t3">Приемка и поставка</div>
+      <div class="step-text" data-key="step_tx3">Принимаем партию на складе фулфилмента в Ташкенте, маркируем и отвозим на Uzum.</div>
+    </div>
+    <div class="step scroll-anim">
+      <div class="step-num">04</div>
+      <div class="step-title" data-key="step_t4">Продвижение и Топ</div>
+      <div class="step-text" data-key="step_tx4">Запускаем рекламные алгоритмы, выводим карточки на первую страницу и передаем вам прибыль.</div>
+    </div>
+  </div>
+</section>
+
+<section class="form-outer" id="form">
+  <div class="form-section scroll-anim">
+    <div class="eyebrow" data-key="form_eyebrow">Обратная связь</div>
+    <div class="section-title" data-key="form_title" style="margin-bottom:12px;">Начните свой бизнес сегодня</div>
+    <p style="color:var(--text-muted); max-width:500px; margin:0 auto 30px; font-size:15px;" data-key="form_sub">Оставьте свои контакты. Наш ведущий аналитик свяжется с вами, проведет бесплатный аудит вашей идеи и рассчитает точную смету.</p>
+
+    <div class="form-grid">
+      <div class="calc-group">
+        <label class="form-label" data-key="f_name">Ваше имя</label>
+        <input type="text" class="form-input" id="clientName" placeholder="Александр">
+      </div>
+      <div class="calc-group">
+        <label class="form-label" data-key="f_phone">Номер телефона</label>
+        <input type="tel" class="form-input" id="clientPhone" placeholder="+998 (90) 000-00-00">
+      </div>
+      <div class="calc-group">
+        <label class="form-label" data-key="f_budget">Ваш стартовый бюджет</label>
+        <div class="custom-select-wrap" id="budgetDropWrap">
+          <div class="custom-select-btn" id="budgetDropBtn" onclick="toggleBudgetDrop()">
+            <span id="budgetDropLabel" data-key="opt_b0">Выберите сумму инвестиций</span>
           </div>
           <div class="custom-select-list" id="budgetDropList">
-            <div class="custom-select-option" data-value="" onclick="pickBudget('', this)">
-              <div class="opt-check"></div>
-              <span data-key="opt_b0">Выберите диапазон</span>
-            </div>
-            <div class="custom-select-option" data-value="1000" onclick="pickBudget('1000', this)">
-              <div class="opt-check"></div>
-              <span data-key="opt_b1">До $1 000</span>
-            </div>
-            <div class="custom-select-option" data-value="3000" onclick="pickBudget('3000', this)">
-              <div class="opt-check"></div>
-              <span data-key="opt_b2">$1 000 — $3 000</span>
-            </div>
-            <div class="custom-select-option" data-value="more" onclick="pickBudget('more', this)">
-              <div class="opt-check"></div>
-              <span data-key="opt_b3">Более $3 000</span>
-            </div>
+            <div class="custom-select-option" data-value="" onclick="pickBudget('', this)"><span data-key="opt_b0">Выберите сумму инвестиций</span></div>
+            <div class="custom-select-option" data-value="1000" onclick="pickBudget('1000', this)"><span data-key="opt_b1">До $1,500</span></div>
+            <div class="custom-select-option" data-value="3000" onclick="pickBudget('3000', this)"><span data-key="opt_b2">$1,500 – $4,000</span></div>
+            <div class="custom-select-option" data-value="7000" onclick="pickBudget('7000', this)"><span data-key="opt_b3">$4,000 – $10,000</span></div>
+            <div class="custom-select-option" data-value="15000" onclick="pickBudget('15000', this)"><span data-key="opt_b4">Более $10,000</span></div>
           </div>
         </div>
-        <!-- Скрытый select для совместимости с handleSubmit -->
-        <select id="budget" style="display:none;">
-          <option value="" data-key="opt_b0">Выберите диапазон</option>
-          <option value="1000" data-key="opt_b1">До $1 000</option>
-          <option value="3000" data-key="opt_b2">$1 000 — $3 000</option>
-          <option value="more" data-key="opt_b3">Более $3 000</option>
-        </select>
+        <input type="hidden" id="budget" value="">
+      </div>
+      <div class="calc-group">
+        <label class="form-label" data-key="f_comm">Предпочтительный способ связи</label>
+        <div class="radio-group">
+          <div class="radio-label active" onclick="setContactMethod('tg', this)">
+            <input type="radio" name="comm" value="tg" checked>
+            <span>Telegram</span>
+          </div>
+          <div class="radio-label" onclick="setContactMethod('call', this)">
+            <input type="radio" name="comm" value="call">
+            <span data-key="f_call">Звонок</span>
+          </div>
+        </div>
       </div>
     </div>
-    <input type="hidden" id="calcData" value="Не использовался">
-    <button class="form-submit" id="submitBtn" onclick="handleSubmit()" data-key="f_submit">
-      🔥 Получить бесплатную консультацию
-    </button>
-    <p class="form-note" data-key="f_note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам.</p>
-  </div>
-</div>
 
-<!-- FOOTER -->
+    <input type="hidden" id="calculatorDetails" value="Не использовался">
+
+    <button class="form-submit" id="submitBtn" onclick="sendLead()" data-key="form_submit">Отправить заявку</button>
+    <div class="form-note" data-key="form_note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</div>
+  </div>
+</section>
+
 <footer>
-  <div class="foot-logo">U<span>-HUB</span></div>
-  <p data-key="foot_text">Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market</p>
-  <p style="margin-top:8px; font-size:12px;">© 2026 U-Hub. <span data-key="foot_rights">Все права защищены.</span></p>
+  <div class="foot-logo">U-<span>Hub</span></div>
+  <div style="margin-bottom: 20px; font-size:13px; color:var(--text-muted);" data-key="foot_sub">Официальный ИТ-партнер по автоматизации и продвижению на маркетплейсах.</div>
+  <p>&copy; 2026 U-Hub Automation Ecosystem. All rights reserved.</p>
 </footer>
 
 <script>
-  let activePackagePrice = 3490000;
-  let activePackageName = "Быстрый Старт";
-
+  /* МУЛЬТИЯЗЫЧНОСТЬ */
   const langData = {
     ru: {
-      nav_courses: "Курсы",
-      nav_cta: "Бесплатная консультация",
-      hero_badge: "Комплексный сервис для селлеров в Узбекистане",
-      hero_h1: "Запустим ваш прибыльный бизнес на <span>Uzum Market</span> под ключ",
-      hero_sub: "От аналитики ниши и обучения закупу до профессиональной инфографики, маркировки на нашем складе в Ташкенте и вывода карточек в ТОП.",
-      hero_btn_primary: "🚀 Получить бесплатную консультацию",
-      hero_btn_secondary: "Посмотреть пакеты",
-      stat_1: "новичков теряют деньги<br>без правильного старта",
-      stat_2_unit: "мин",
-      stat_2: "до первого звонка<br>от нашего менеджера",
-      stat_3_unit: "пакета",
-      stat_3: "под любой бюджет<br>и цель",
+      nav_pkg: "Тарифы", nav_cta: "Начать бизнес",
+      hero_badge: "Официальный технологический партнер Uzum Market",
+      hero_title_html: "Запустите свой бизнес на <span>Uzum Market</span> под ключ",
+      hero_sub: "Полный цикл вывода локальных брендов и селлеров на маркетплейс №1 в Узбекистане. От открытия фирмы до первых продаж с гарантией результата.",
+      hero_btn_primary: "Оставить заявку", hero_btn_secondary: "Рассчитать стоимость",
+      stat_1: "успешных магазинов<br>запущено", stat_2: "суммарный оборот<br>наших селлеров", stat_3: "среднее время сборки<br>и поставки на склад",
       scroll_hint: "Листайте",
-      pains_eyebrow: "Кому мы помогаем",
-      pains_title: "Почему 80% новичков теряют деньги в первые 2 месяца?",
-      pains_sub: "Узнаёте себя? Мы уже решили эти проблемы для десятков продавцов.",
-      pain1_prob: "«Не знаю, где брать товар»",
-      pain1_sol: "Мы проведём аналитику рынка, подберём маржинальные ниши и покажем, как выгодно закупаться <strong>на фабриках Китая</strong> или на локальных рынках (Абу Сахий/ТТЗ).",
-      pain2_prob: "«Боюсь ошибиться при первом заказе»",
-      pain2_sol: "Пошагово обучим работе с <strong>1688/Alibaba</strong> и передадим контакты проверенных карго-компаний с реальными отзывами.",
-      pain3_prob: "«Устали упаковывать коробки дома»",
-      pain3_sol: "Наш <strong>фулфилмент-центр в Ташкенте</strong> примет товар, проверит на брак, упакует и сам отвезёт на склад Uzum.",
-      pain4_prob: "«Карточки есть, но продаж нет»",
-      pain4_sol: "Сделаем <strong>мощное SEO на русском и узбекском</strong>, настроим рекламу и выведем карточки в ТОП поиска Uzum.",
-      pkg_eyebrow: "Пакеты под ключ",
-      pkg_title: "Выберите формат быстрого старта",
-      pkg_sub: "Три пакета под любой бюджет и уровень опыта.",
-      p1_name: "Тест-Драйв",
-      p1_note: "* Расходные материалы для упаковки рассчитываются индивидуально под ваш товар",
-      p1_f1: "Регистрация кабинета продавца и настройка ЭДО (Didox)",
-      p1_f2: "Создание и SEO-оптимизация до 5 карточек товара",
-      p1_f3: "Базовая инфографика — по 3 слайда на каждый товар",
-      pkg_res_label: "Результат",
-      p1_res: "Магазин готов к работе, товары прошли модерацию.",
-      pkg_btn: "Оставить заявку",
-      hit_badge: "Хит продаж",
-      p2_name: "Быстрый Старт",
-      p2_note: "+ расходы на доставку на склад Uzum<br>* Расходные материалы рассчитываются индивидуально",
-      p2_f1: "Аналитика: подбор 3 прибыльных товаров под ваш бюджет",
-      p2_f2: "До 20 SEO-карточек (RU/UZ) + премиум-инфографика",
-      p2_f3: "Фулфилмент: приёмка, проверка, маркировка и упаковка первой партии до 150 ед.",
-      p2_f4: "Доставка собранной партии на склад Uzum Market",
-      p2_f5: "Настройка внутренней рекламы на Uzum на первый месяц",
-      p2_res: "Полностью готовый бизнес. Товар на складе Uzum, пошли первые продажи.",
-      prem_badge: "Премиум",
-      p3_name: "Максимум + Китай",
-      p3_note: "* Расходные материалы рассчитываются индивидуально под ваш товар",
-      p3_f1: "Модуль «Секреты Китая»: 1688/Alibaba, проверка поставщиков, база карго-компаний",
-      p3_f2: "Помощь в разработке бренда: нейминг и логотип",
-      p3_f3: "До 50 SEO-карточек + организация фотосессии в Ташкенте",
-      p3_f4: "Фулфилмент: полная выбраковка, переупаковка и маркировка до 500 ед.",
-      p3_f5: "Контроль сдачи на склад Uzum + стратегия вывода в ТОП",
-      p3_res: "Умеете закупать в Китае выгодно. Вся операционка в Ташкенте настроена под ключ.",
-      calc_title: "Калькулятор стоимости",
-      calc_base_pkg: "Выберите базовый пакет:",
-      calc_cards_count: "Дополнительные карточки товара (+35 000 сум/ед):",
-      calc_add_support: "Добавить 1 месяц сопровождения «Лайт» (+1 490 000 сум)",
-      calc_total_label: "Итоговая стоимость",
-      calc_btn: "Заказать по расчету",
-      srv_eyebrow: "Точечная помощь",
-      srv_title: "Нужна конкретная услуга?",
-      srv_sub: "Не готовы к полному пакету? Закажите только то, что нужно прямо сейчас.",
-      srv1_name: "SEO-карточка товара",
-      srv1_desc: "Продающее название, описание на RU/UZ и заполнение характеристик под алгоритм Uzum.",
-      srv1_unit: "за 1 карточку",
-      srv2_name: "Дизайн инфографики",
-      srv2_desc: "3–5 слайдов rich-контента для одного товара. Пробиваем баннерную слепоту и повышаем CTR.",
-      srv2_unit: "за 1 товар",
-      srv3_name: "Глубокий аудит магазина",
-      srv3_desc: "Анализ карточек, рекламы и цен. PDF-отчёт с конкретными ошибками и планом исправления.",
-      srv3_unit: "разово",
-      srv4_name: "Консультация 1:1 (60 мин)",
-      srv4_desc: "Ответы на вопросы в Zoom или Telegram: ниша, фулфилмент, налоги, реклама — без воды.",
-      srv4_unit: "за сессию",
-      srv5_name: "Закуп из Китая под ключ",
-      srv5_desc: "Найдём товар на 1688, проверим фабрику, просчитаем юнит-экономику и организуем карго до Ташкента.",
-      srv5_unit: "за позицию",
+      pains_eyebrow: "Реальность маркетплейсов", pains_title: "Почему 80% новичков теряют бюджет?", pains_sub: "Выход на Uzum сегодня — это не просто «купить товар и выложить фото». Это жесткая конкуренция и сложная операционная система.",
+      pain_p1: "Брак и проблемы с Китаем", pain_s1: "Поставщики присылают не тот цвет, путают размеры или отправляют скрытый брак. <strong>Мы проверяем каждую единицу товара на нашем складе в Китае.</strong>",
+      pain_p2: "Жесткая модерация и блокировки", pain_s2: "Неправильная маркировка, отсутствие штрихкодов или ошибки в накладных ведут к отказам в приемке. <strong>Мы маркируем товар строго по регламенту Uzum.</strong>",
+      pain_p3: "Слив бюджета на рекламу", pain_s3: "Внутреннее продвижение съедает деньги, а карточка товара не поднимается в поиске из-за плохой SEO-оптимизации. <strong>Выводим карточки в ТОП по алгоритмам.</strong>",
+      pain_p4: "Заморозка денег в кассовом разрыве", pain_s4: "Товар закончился, новые позиции еще в пути, а конкуренты уже забрали ваши позиции. <strong>Настраиваем бесперебойные цепочки поставок.</strong>",
+      pkg_eyebrow: "Комплексные пакеты", pkg_title: "Готовые решения для вашего старта", pkg_sub: "Выберите формат участия: от базового консалтинга до полного делегирования всех процессов нашей команде экспертов.",
+      pkg_n1: "Базовый старт", pkg_note1: "Разовый платеж за настройку фундамента", pkg_res_title: "Результат:", pkg_res1: "Юридически чистый бизнес, готовый к первой поставке товара.",
+      pkg_f1_1: "Регистрация ООО/ЧП для маркетплейса", pkg_f1_2: "Открытие расчетного счета и подключение ЭЦП", pkg_f1_3: "Регистрация личного кабинета продавца", pkg_f1_4: "Базовый анализ 3 перспективных ниш", pkg_f1_5: "Гайды по работе со складом Uzum",
+      pkg_badge_hit: "Популярно", pkg_n2: "Запуск под ключ", pkg_note2: "Идеально для инвесторов и предпринимателей", pkg_res2: "Действующий магазин с первыми продажами и выведенными в топ карточками.",
+      pkg_f2_1: "Всё из пакета «Базовый старт»", pkg_f2_2: "Поиск и выкуп прибыльного товара в Китае", pkg_f2_3: "Организация логистики до Ташкента", pkg_f2_4: "Профессиональная инфографика и SEO для 10 карточек", pkg_f2_5: "Первая маркировка и доставка партии на склад Uzum", pkg_f2_6: "Настройка и ведение рекламы (1 месяц)",
+      pkg_n3: "Бизнес-масштаб", pkg_note3: "Для крупных брендов и производителей", pkg_res3: "Полноценный цифровой филиал вашего производства с автоматизированным управлением.",
+      pkg_f3_1: "Всё из пакета «Запуск под ключ»", pkg_f3_2: "Интеграция с вашей системой 1С / МойСклад", pkg_f3_3: "Инфографика и SEO продвижение для 50+ товаров", pkg_f3_4: "Разработка индивидуальной стратегии бренда", pkg_f3_5: "Закрепленный аккаунт-менеджер на 3 месяца", pkg_f3_6: "Обучение ваших сотрудников операционной работе",
+      pkg_btn: "Выбрать тариф",
+      calc_eyebrow: "Гибкий конфигуратор", calc_title: "Рассчитайте персональный тариф", calc_sub: "Выберите только те услуги, которые необходимы вашему бизнесу прямо сейчас. Стоимость и скидка пересчитаются автоматически.",
+      calc_g1: "1. Категория товаров (Сложность анализа и SEO)", calc_cat1: "Одежда и обувь", calc_cat2: "Электроника и дома", calc_cat3: "Красота и аксессуары",
+      calc_g2_html: "2. Количество уникальных товаров (SKU): <span id=\"skuCountText\">{val}</span>",
+      calc_g3: "3. Необходимая инфраструктура и опции",
+      calc_opt1: "Регистрация юрлица и ЭЦП (+$100)", calc_opt2: "Поиск поставщика в КНР (+$200)", calc_opt3: "Фотосессия и контент (+$180)", calc_opt4: "Настройка интеграции 1С (+$350)",
+      calc_res_t: "Предварительный расчет", calc_btn_apply: "Закрепить стоимость",
+      srv_eyebrow: "Отдельные сервисы", srv_title: "Точечная помощь вашему магазину", srv_sub: "Вам не обязательно покупать целый пакет. Вы можете заказать конкретную услугу для усиления текущих продаж.",
+      srv_n1: "Сборная фотосессия товаров в Ташкенте", srv_d1: "Профессиональные фото на моделях и циклораме, инфографика, соответствующая правилам Uzum. Без переплат за аренду студии.",
+      srv_n2: "SEO-оптимизация и аудит карточек", srv_d2: "Пересобираем семантическое ядро, внедряем высокочастотные поисковые ключи в заголовки и описания для роста органических показов.",
+      srv_n3: "Услуги фулфилмента и маркировки", srv_d3: "Заберем ваш товар от карго, проверим на брак, наклеим термоэтикетки со штрихкодами, упакуем по правилам и сдадим на склад Uzum.",
+      srv_n4: "Сертификация и отказные письма", srv_d4: "Оформление деклараций соответствия, протоколов испытаний и отказных писем для легальной торговли брендами на территории РУз.",
       srv_order_btn: "Заказать",
-      subs_eyebrow: "Ежемесячное сопровождение",
-      subs_title: "Передайте рутину экспертам",
-      subs_sub: "Ведите бизнес — мы берём на себя всю операционку вашего магазина.",
-      s1_tier: "Базовый",
-      s1_name: "Лайт-Менеджер",
-      sub_unit: "сум/мес",
-      s1_desc: "Ответы на отзывы, контроль остатков на Uzum, участие в акциях. Всего 15 минут вашего времени в день — мы делаем остальное.",
-      s2_tier: "Оптимальный",
-      s2_name: "Управление & Маркетинг",
-      s2_desc: "Полное ведение + оптимизация рекламных ставок, еженедельная аналитика продаж, оформление накладных и таймслотов на склад Uzum.",
-      s3_tier: "Максимальный",
-      s3_name: "Полный аутсорсинг",
-      s3_desc: "Полная замена штата сотрудников. Рассчитаем, когда товар заканчивается, и дадим точную отмашку: «Пора докупать X единиц». Физическую сборку делают наши сотрудники автоматически.",
-      s3_small: "+ сдельная оплата за физический фулфилмент",
-      steps_eyebrow: "Как всё устроено",
-      steps_title: "4 шага до первых продаж",
-      steps_sub: "Простой и понятный процесс от заявки до реального дохода.",
-      st1_title: "Заявка и аудит",
-      st1_text: "Созваниваемся и подбираем стратегию под ваш бюджет и нишу.",
-      st2_title: "Товар и контент",
-      st2_text: "Вы закупаете товар — мы параллельно готовим SEO-тексты и дизайн.",
-      st3_title: "Фулфилмент",
-      st3_text: "Привозите товар к нам — проверяем, пакуем, маркируем и везём на Uzum.",
-      st4_title: "Продажи",
-      st4_text: "Включаем рекламу, выводим в ТОП и передаём готовый работающий кабинет.",
-      f_eyebrow: "Старт бесплатно",
-      f_title: "Готовы запустить бизнес на Uzum?",
-      f_sub: "Наш менеджер свяжется с вами в течение <strong style='color:var(--text);'>15 минут</strong>, ответит на вопросы и проведёт базовый аудит вашей ниши.",
-      label_name: "Ваше имя",
-      label_phone: "Номер телефона",
-      label_contact: "Удобный способ связи",
-      radio_call: "📞 Позвонить",
-      radio_tg: "✈️ Написать в Telegram",
-      label_budget: "Бюджет на закупку товара",
-      opt_b0: "Выберите диапазон",
-      opt_b1: "До $1 000",
-      opt_b2: "$1 000 — $3 000",
-      opt_b3: "Более $3 000",
-      f_submit: "🔥 Получить бесплатную консультацию",
-      f_note: "Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам.",
-      foot_text: "Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market",
-      foot_rights: "Все права защищены."
+      sub_eyebrow: "Регулярное сопровождение", sub_title: "Аутсорсинг личного кабинета", sub_sub: "Для тех, кто хочет инвестировать средства, но не имеет времени заниматься ежедневной операционной рутиной и контролем склада.",
+      sub_t1: "Ассистент", sub_n1: "Поддержка кабинета", sub_d1: "Мониторинг остатков на складе, своевременное создание накладных, ответы на отзывы и вопросы покупателей, контроль цен.",
+      sub_t2: "Трафик", sub_n2: "Управление продажами", sub_d2: "Полное ведение внутренней рекламы, участие в масштабных распродажах Uzum Market, аналитика конкурентов, еженедельная отчетность по ROI.",
+      sub_t3: "Максимум", sub_n3: "Удаленный директор", sub_d3: "Комплексное управление вашим брендом, оптимизация оборачиваемости капитала, масштабирование матрицы SKU, защита от демпинга.",
+      step_eyebrow: "Процесс работы", step_title: "4 шага до первой прибыли", step_sub: "Мы выстроили прозрачную пошаговую систему взаимодействия. Вы всегда знаете, на каком этапе находится ваш проект.",
+      step_t1: "Анализ и стратегия", step_tx1: "Анализируем ваш бюджет, подбираем оптимальную товарную матрицу с высокой маржинальностью.",
+      step_t2: "Договор и подготовка", step_tx2: "Регистрируем фирму, открываем кабинеты, закупаем товар в Китае или у локальных фабрик.",
+      step_t3: "Приемка и поставка", step_tx3: "Принимаем партию на складе фулфилмента в Ташкенте, маркируем и отвозим на Uzum.",
+      step_t4: "Продвижение и Топ", step_tx4: "Запускаем рекламные алгоритмы, выводим карточки на первую страницу и передаем вам прибыль.",
+      form_eyebrow: "Обратная связь", form_title: "Начните свой бизнес сегодня", form_sub: "Оставьте свои контакты. Наш ведущий аналитик свяжется с вами, проведет бесплатный аудит вашей идеи и рассчитает точную смету.",
+      f_name: "Ваше имя", f_phone: "Номер телефона", f_budget: "Ваш стартовый бюджет", f_comm: "Предпочтительный способ связи", f_call: "Звонок",
+      opt_b0: "Выберите сумму инвестиций", opt_b1: "До $1,500", opt_b2: "$1,500 – $4,000", opt_b3: "$4,000 – $10,000", opt_b4: "Более $10,000",
+      form_submit: "Отправить заявку", form_note: "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
+      foot_sub: "Официальный ИТ-партнер по автоматизации и продвижению на маркетплейсах."
     },
     uz: {
-      nav_courses: "Kurslar",
-      nav_cta: "Bepul konsultatsiya",
-      hero_badge: "Oʻzbekistondagi sellerlar uchun kompleks xizmat",
-      hero_h1: "Uzum Marketda oʻz daromadli biznesingizni <span>pod klyuch</span> ishga tushiring",
-      hero_sub: "Nisha tahlili va xaridni oʻrgatishdan tortib professional infografika, Toshkentdagi omborimizda qadoqlash hamda kartochkalarni TOPga olib chiqishgacha.",
-      hero_btn_primary: "🚀 Bepul konsultatsiya olish",
-      hero_btn_secondary: "Paketlarni koʻrish",
-      stat_1: "yangi boshlaganlar toʻgʻri startsiz<br>mablagʻlarini yoʻqotishadi",
-      stat_2_unit: "daqiqa",
-      stat_2: "menejerimiz qoʻngʻiroq<br>qilishi uchun ketadigan vaqt",
-      stat_3_unit: "paket",
-      stat_3: "har qanday byudjet<br>va maqsadga mos",
-      scroll_hint: "Pastga varoqlang",
-      pains_eyebrow: "Kimga yordam beramiz",
-      pains_title: "Nima uchun 80% yangi boshlovchilar dastlabki 2 oyda pul yoʻqotishadi?",
-      pains_sub: "Oʻzingizni tanidingizmi? Biz oʻnlab sotuvchilar uchun bu muammolarni hal qildik.",
-      pain1_prob: "«Mahsulotni qayerdan olishni bilmayman»",
-      pain1_sol: "Bozorni tahlil qilamiz, daromadli nishalarni tanlaymiz va <strong>Xitoy fabrikalaridan</strong> yoki mahalliy bozorlardan (Abu Saxiy/TTZ) qanday qilib foyda bilan sotib olishni koʻrsatamiz.",
-      pain2_prob: "«Birinchi buyurtmada adashishdan qoʻrqaman»",
-      pain2_sol: "<strong>1688/Alibaba</strong> platformasida ishlashni bosqichma-bosqich oʻrgatamiz va real sharhlarga ega boʻlgan ishonchli kargo kompaniyalari kontaktlarini beramiz.",
-      pain3_prob: "«Uydagi qutilarni qadoqlashdan charchadingiz»",
-      pain3_sol: "Toshkentdagi <strong>fulfilment markazimiz</strong> mahsulotni qabul qiladi, brakka tekshiradi, qadoqlaydi va Uzum omboriga oʻzi olib boradi.",
-      pain4_prob: "«Kartochkalar bor, lekin sotuv yoʻq»",
-      pain4_sol: "<strong>Rus va oʻzbek tillarida kuchli SEO</strong> qilamiz, reklamani sozlaymiz va kartochkalarni Uzum qidiruvining TOPiga chiqaramiz.",
-      pkg_eyebrow: "Tayyor paketlar",
-      pkg_title: "Tezkor start formatini tanlang",
-      pkg_sub: "Har qanday byudjet va tajriba darajasiga mos uchta paket.",
-      p1_name: "Test-Drayv",
-      p1_note: "* Qadoqlash uchun sarf materiallari mahsulotingizga qarab alohida hisoblanadi",
-      p1_f1: "Sotuvchi kabinetini roʻyxatdan oʻtkazish va EDO (Didox)ni sozlash",
-      p1_f2: "5 tagacha mahsulot kartochkasini yaratish va SEO-optimizatsiya qilish",
-      p1_f3: "Bazaviy infografika — har bir mahsulot uchun 3 tadan slayd",
-      pkg_res_label: "Natija",
-      p1_res: "Doʻkon ishlashga tayyor, mahsulotlar moderatsiyadan oʻtdi.",
-      pkg_btn: "Arizani qoldirish",
-      hit_badge: "Xit sotuv",
-      p2_name: "Tezkor Start",
-      p2_note: "+ Uzum omboriga yetkazib berish xarajatlari<br>* Sarf materiallari alohida hisoblanadi",
-      p2_f1: "Analitika: byudjetingizga mos 3 ta daromadli mahsulotni tanlash",
-      p2_f2: "20 tagacha SEO-kartochka (RU/UZ) + premium-infografika",
-      p2_f3: "Fulfilment: 150 donagacha boʻlgan birinchi partiyani qabul qilish, brakka tekshirish, markirovka qilish va qadoqlash",
-      p2_f4: "Yigʻilgan partiyani Uzum Market omboriga yetkazib berish",
-      p2_f5: "Birinchi oy uchun Uzum ichidagi reklamani sozlash",
-      p2_res: "Toʻliq tayyor biznes. Mahsulot Uzum omborida, birinchi sotuvlar boshlandi.",
-      prem_badge: "Premium",
-      p3_name: "Maksimum + Xitoy",
-      p3_note: "* Qadoqlash uchun sarf materiallari mahsulotingizga qarab alohida hisoblanadi",
-      p3_f1: "«Xitoy sirlari» moduli: 1688/Alibaba, yetkazib beruvchilarni tekshirish, kargo kompaniyalari bazasi",
-      p3_f2: "Brend yaratishda yordam: neyming va logotip",
-      p3_f3: "50 tagacha SEO-kartochka + Toshkentda fotosessiya tashkil qilish",
-      p3_f4: "Fulfilment: 500 donagacha toʻliq brakka tekshirish, qayta qadoqlash va markirovka qilish",
-      p3_f5: "Uzum omboriga topshirishni nazorat qilish + TOPga olib chiqish strategiyasi",
-      p3_res: "Xitoydan mahsulotni foyda bilan sotib olishni bilasiz. Toshkentdagi barcha operatsion jarayonlar tayyor holda sozlab beriladi.",
-      calc_title: "Narx kalkulyatori",
-      calc_base_pkg: "Asosiy paketni tanlang:",
-      calc_cards_count: "Qoʻshimcha mahsulot kartochkalari soni (+35 000 soʻm/dona):",
-      calc_add_support: "1 oylik «Layt» hamrohligini qoʻshish (+1 490 000 soʻm)",
-      calc_total_label: "Umumiy qiymat",
-      calc_btn: "Hisob boʻyicha buyurtma berish",
-      srv_eyebrow: "Aniq yordam",
-      srv_title: "Muayyan xizmat kerakmi?",
-      srv_sub: "Toʻliq paketga tayyor emasmi? Hozir kerak boʻlgan narsanigina buyurtma qiling.",
-      srv1_name: "SEO-mahsulot kartochkasi",
-      srv1_desc: "Uzum algoritmi uchun RU/UZ tillarida sotuvchi nom, tavsif va xususiyatlarni toʻldirish.",
-      srv1_unit: "1 kartochka uchun",
-      srv2_name: "Infografika dizayni",
-      srv2_desc: "1 mahsulot uchun 3–5 ta rich-kontent slayd. Banner koʻrmaslikni sindiradi va CTRni oshiradi.",
-      srv2_unit: "1 mahsulot uchun",
-      srv3_name: "Doʻkonni chuqur audit qilish",
-      srv3_desc: "Kartochkalar, reklama va narxlarni tahlil qilish. Aniq xatolar va tuzatish rejasi bilan PDF-hisobot.",
-      srv3_unit: "bir martalik",
-      srv4_name: "1:1 konsultatsiya (60 daqiqa)",
-      srv4_desc: "Zoom yoki Telegramda savollaringizga javob: nisha, fulfilment, soliqlar, reklama — suvsizsiz.",
-      srv4_unit: "sessiya uchun",
-      srv5_name: "Xitoydan tayyor xarid",
-      srv5_desc: "1688da mahsulot topamiz, fabrikani tekshiramiz, birlik-iqtisodini hisoblaymiz va Toshkentgacha kargo tashkil qilamiz.",
-      srv5_unit: "pozitsiya uchun",
+      nav_pkg: "Tariflar", nav_cta: "Biznesni boshlash",
+      hero_badge: "Uzum Market rasmiy texnologik hamkori",
+      hero_title_html: "Uzum Market-da oʻz biznesingizni <span>kalt kalitgacha</span> yoʻlga qoʻying",
+      hero_sub: "Oʻzbekistondagi №1 marketpleysga mahalliy brendlar va sellerlarni olib chiqishning toʻliq tsikli. Firma ochishdan tortib, natija kafolati bilan birinchi savdogacha.",
+      hero_btn_primary: "Ariza qoldirish", hero_btn_secondary: "Narxni hisoblash",
+      stat_1: "muvaffaqiyatli doʻkonlar<br>ishga tushirildi", stat_2: "sellerlarimizning<br>umumiy aylanmasi", stat_3: "omborda yigʻish va<br>yetkazish oʻrtacha vaqti",
+      scroll_hint: "Varaqlang",
+      pains_eyebrow: "Marketpleyslarning haqiqati", pains_title: "Nega 80% yangi boshlaganlar budjetini yoʻqotadi?", pains_sub: "Bugun Uzumga chiqish shunchaki 'tovar sotib olib, rasm qoʻyish' emas. Bu qattiq raqobat va murakkab operatsion tizim.",
+      pain_p1: "Brak va Xitoy bilan muammolar", pain_s1: "Etkazib beruvchilar notoʻgʻri rang, oʻlchamlarni almashtirib yuborishadi yoki yashirin brak yuborishadi. <strong>Biz Xitoydagi omborimizda har bir tovar birligini tekshiramiz.</strong>",
+      pain_p2: "Qattiq moderatsiya va blokirovkalar", pain_s2: "Notoʻgʻri markirovka, shtrix-kodlarning yoʻqligi yoki yuk xatlaridagi xatolar qabul qilishni rad etishga olib keladi. <strong>Biz tovarlarni qatʼiy Uzum reglamenti boʻyicha markirovka qilamiz.</strong>",
+      pain_p3: "Reklamaga budjetni sovurish", pain_s3: "Ichki reklama pulni yeb qoʻyadi, tovar kartochkasi esa SEO optimizatsiyasi yomonligi sababli qidiruvda koʻtarilmaydi. <strong>Biz kartochkalarni algoritmlar boʻyicha TOPga chiqaramiz.</strong>",
+      pain_p4: "Pullarning kassa uzilishida muzlab qolishi", pain_s4: "Tovar tugadi, yangi pozitsiyalar hali yoʻlda, raqobatchilar esa sizning oʻrningizni egallab boʻlishdi. <strong>Biz uzluksiz yetkazib berish zanjirini yoʻlga qoʻyamiz.</strong>",
+      pkg_eyebrow: "Kompleks paketlar", pkg_title: "Sizning startingiz uchun tayyor yechimlar", pkg_sub: "Ishtirok etish formatini tanlang: boshlangʻich konsaltingdan tortib barcha jarayonlarni ekspertlar jamoamizga toʻliq topshirishgacha.",
+      pkg_n1: "Boshlangʻich start", pkg_note1: "Poydevorni sozlash uchun bir martalik toʻlov", pkg_res_title: "Natija:", pkg_res1: "Birinchi tovar yetkazib berishga tayyor, yuridik jihatdan toza biznes.",
+      pkg_f1_1: "Marketpleys uchun MChJ/YTT roʻyxatdan oʻtkazish", pkg_f1_2: "Hisob-kitob raqamini ochish va ERI ulash", pkg_f1_3: "Sotuvchining shaxsiy kabinetini roʻyxatdan oʻtkazish", pkg_f1_4: "3 ta istiqbolli yoʻnalishni boshlangʻich tahlili", pkg_f1_5: "Uzum ombori bilan ishlash boʻyicha qoʻllanmalar",
+      pkg_badge_hit: "Ommabop", pkg_n2: "Tayyor holda topshirish", pkg_note2: "Investorlar va tadbirkorlar uchun juda mos keladi", pkg_res2: "Birinchi savdolari boʻlgan va kartochkalari topga chiqarilgan faol doʻkon.",
+      pkg_f2_1: "«Boshlangʻich start» paketidagi barcha xizmatlar", pkg_f2_2: "Xitoydan daromadli tovarni qidirish va sotib olish", pkg_f2_3: "Toshkentgacha logistikani tashkil qilish", pkg_f2_4: "10 ta kartochka uchun professional infografika va SEO", pkg_f2_5: "Birinchi markirovka va partiyani Uzum omboriga yetkazish", pkg_f2_6: "Reklamani sozlash va yuritish (1 oy)",
+      pkg_n3: "Biznes miqyos", pkg_note3: "Yirik brendlar va ishlab chiqaruvchilar uchun", pkg_res3: "Avtomatlashtirilgan boshqaruvga ega ishlab chiqarishingizning toʻliq raqamli filiali.",
+      pkg_f3_1: "«Tayyor holda topshirish» paketidagi barcha xizmatlar", pkg_f3_2: "Sizning 1C / MoySklad tizimingiz bilan integratsiya", pkg_f3_3: "50+ dan ortiq tovarlar uchun infografika va SEO proyeksiyasi", pkg_f3_4: "Individual brend strategiyasini ishlab chiqish", pkg_f3_5: "3 oyga biriktirilgan akkaunt-menejer", pkg_f3_6: "Xodimlaringizni operatsion ishlarga oʻrgatish",
+      pkg_btn: "Tarifni tanlash",
+      calc_eyebrow: "Moslashuvchan konfigurator", calc_title: "Shaxsiy tarifni hisoblang", calc_sub: "Hozirgi vaqtda biznesingiz uchun zarur boʻlgan xizmatlarni tanlang. Narx va chegirma avtomatik ravishda hisoblanadi.",
+      calc_g1: "1. Tovar toifasi (Tahlil va SEO murakkabligi)", calc_cat1: "Kiyim va poyabzal", calc_cat2: "Elektronika va uy", calc_cat3: "Goʻzallik va aksessuarlar",
+      calc_g2_html: "2. Noyob tovarlar soni (SKU): <span id=\"skuCountText\">{val}</span>",
+      calc_g3: "3. Zarur infratuzilma va variantlar",
+      calc_opt1: "Yuridik shaxs va ERI roʻyxatdan oʻtkazish (+$100)", calc_opt2: "Xitoydan yetkazib beruvchini qidirish (+$200)", calc_opt3: "Fotosessiya va kontent (+$180)", calc_opt4: "1C integratsiyasini sozlash (+$350)",
+      calc_res_t: "Dastlabki hisob-kitob", calc_btn_apply: "Narxni mustahkamlash",
+      srv_eyebrow: "Alohida xizmatlar", srv_title: "Doʻkoningizga maqsadli yordam", srv_sub: "Butun paketni sotib olishingiz shart emas. Joriy savdolarni oshirish uchun aniq bir xizmatga buyurtma berishingiz mumkin.",
+      srv_n1: "Toshkentda tovarlarning jamoaviy fotosessiyasi", srv_d1: "Modellar va sikloramada professional fotosuratlar, Uzum qoidalariga mos keladigan infografika. Studiya ijarasi uchun ortiqcha toʻlovlarsiz.",
+      srv_n2: "SEO optimizatsiyasi va kartochkalar auditi", srv_d2: "Semantik yadroni qayta yigʻamiz, organik taassurotlarni oshirish uchun sarlavha va tavsiflarga yuqori chastotali kalit soʻzlarni kiritamiz.",
+      srv_n3: "Fulfillment va markirovka xizmatlari", srv_d3: "Tovaringizni kargodan olib ketamiz, brakka tekshiramiz, shtrix-kodli termo-yorliqlarni yopishtiramiz, qoidalar boʻyicha qadoqlaymiz va Uzum omboriga topshiramiz.",
+      srv_n4: "Sertifikatlashtirish va rad etish xatlari", srv_d4: "Oʻzbekiston hududida brendlar bilan qonuniy savdo qilish uchun muvofiqlik deklaratsiyalari, sinov bayonnomalari va rad etish xatlarini rasmiylashtirish.",
       srv_order_btn: "Buyurtma berish",
-      subs_eyebrow: "Har oylik hamrohlik",
-      subs_title: "Rutina ishni ekspertlarga topshiring",
-      subs_sub: "Siz biznesni boshqaring — doʻkoningizning barcha operatsion ishlarini biz oʻz zimmamizga olamiz.",
-      s1_tier: "Bazaviy",
-      s1_name: "Layt-Menedjer",
-      sub_unit: "soʻm/oy",
-      s1_desc: "Sharhlarga javob berish, Uzumdagi qoldiqlarni nazorat qilish, aksiyalarda qatnashish. Kuniga bor-yoʻgʻi 15 daqiqa vaqtingiz ketadi — qolgan barcha ishni biz bajaramiz.",
-      s2_tier: "Optimal",
-      s2_name: "Boshqaruv & Marketing",
-      s2_desc: "Toʻliq yuritish + reklama stavkalarini optimizatsiya qilish, haftalik sotuvlar analitikasi, Uzum omboriga yuk xatlari va taymslotlarni rasmiylashtirish.",
-      s3_tier: "Maksimal",
-      s3_name: "Toʻliq autsorsing",
-      s3_desc: "Xodimlar shtatini toʻliq almashtirish. Mahsulot qachon tugashini hisoblab chiqamiz va aniq koʻrsatma beramiz: «X dona mahsulot sotib olish vaqti keldi». Mahsulotlarni jismoniy yigʻish ishlarini xodimlarimiz avtomatik tarzda bajarishadi.",
-      s3_small: "+ jismoniy fulfilment uchun ishbay haq toʻlanadi",
-      steps_eyebrow: "Hammasi qanday ishlaydi",
-      steps_title: "Birinchi sotuvgacha 4 qadam",
-      steps_sub: "Arizadan boshlab real daromadgacha boʻlgan oddiy va tushunarli jarayon.",
-      st1_title: "Ariza va audit",
-      st1_text: "Siz bilan bogʻlanamiz va byudjetingiz hamda nishangizga mos strategiyani tanlaymiz.",
-      st2_title: "Mahsulot va kontent",
-      st2_text: "Siz mahsulotni sotib olasiz — biz esa parallel ravishda SEO matnlari va dizaynni tayyorlaymiz.",
-      st3_title: "Fulfilment",
-      st3_text: "Mahsulotni bizga olib kelasiz — tekshiramiz, qadoqlaymiz, markirovka qilamiz va Uzumga olib boramiz.",
-      st4_title: "Sotuvlar",
-      st4_text: "Reklamani yoqamiz, TOPga chiqaramiz va tayyor ishlayotgan kabinetni topshiramiz.",
-      f_eyebrow: "Bepul start",
-      f_title: "Uzumda biznes boshlashga tayyormisiz?",
-      f_sub: "Menejerimiz siz bilan <strong style='color:var(--text);'>15 daqiqa</strong> ichida bogʻlanadi, savollaringizga javob beradi va nishangizni bazaviy audit qiladi.",
-      label_name: "Sizning ismingiz",
-      label_phone: "Telefon raqamingiz",
-      label_contact: "Bogʻlanish uchun qulay usul",
-      radio_call: "📞 Qoʻngʻiroq qilish",
-      radio_tg: "✈️ Telegramda yozish",
-      label_budget: "Mahsulot sotib olish byudjeti",
-      opt_b0: "Oraliqni tanlang",
-      opt_b1: "$1 000 gacha",
-      opt_b2: "$1 000 — $3 000",
-      opt_b3: "$3 000 dan koʻp",
-      f_submit: "🔥 Bepul konsultatsiya olish",
-      f_note: "Tugmani bosish orqali siz shaxsiy maʼlumotlarni qayta ishlashga rozilik bildirasiz. Maʼlumotlarni uchinchi shaxslarga bermaymiz.",
-      foot_text: "Toshkent, Oʻzbekiston &nbsp;·&nbsp; Uzum Market sellerlari uchun kompleks xizmat",
-      foot_rights: "Barcha huquqlar himoyalangan."
+      sub_eyebrow: "Muntazam kuzatuv", sub_title: "Shaxsiy kabinet autsorsingi", sub_sub: "Mablagʻ kiritmoqchi boʻlgan, ammo kundalik operatsion ishlar va ombor nazorati bilan shugʻullanishga vaqti boʻlmaganlar uchun.",
+      sub_t1: "Assistent", sub_n1: "Kabinetni qoʻllab-quvvatlash", sub_d1: "Omborda tovar qoldiqlarini monitoring qilish, yuk xatlarini vaqtida yaratish, xaridorlarning raddiyalari va savollariga javob berish, narxlarni nazorat qilish.",
+      sub_t2: "Trafik", sub_n2: "Savdolarni boshqarish", sub_d2: "Ichki reklamani toʻliq yuritish, Uzum Market yirik aksiyalarida ishtirok etish, raqobatchilar tahlili, ROI boʻyicha haftalik hisobotlar.",
+      sub_t3: "Maksimum", sub_n3: "Masofaviy direktor", sub_d3: "Brendingizni kompleks boshqarish, kapital aylanishini optimallashtirish, SKU matritsasini kengaytirish, dempingdan himoya qilish.",
+      step_eyebrow: "Ish jarayoni", step_title: "Birinchi daromadgacha 4 qadam", step_sub: "Biz shaffof va bosqichma-bosqich oʻzaro aloqa tizimini qurdik. Siz har doim loyihangiz qaysi bosqichda ekanligini bilasiz.",
+      step_t1: "Tahlil va strategiya", step_tx1: "Budjetingizni tahlil qilamiz, yuqori marjali optimal tovar matritsasini tanlaymiz.",
+      step_t2: "Shartnoma va tayyorgarlik", step_tx2: "Firmani roʻyxatdan oʻtkazamiz, kabinetlarni ochamiz, Xitoydan yoki mahalliy fabrikalardan tovar sotib olamiz.",
+      step_t3: "Qabul qilish va yetkazib berish", step_tx3: "Partiyani Toshkentdagi fulfillment omborimizda qabul qilamiz, markirovka qilamiz va Uzumga olib boramiz.",
+      step_t4: "Ilgari surish va Top", step_tx4: "Reklama algoritmlarini ishga tushiramiz, kartochkalarni birinchi sahifaga chiqaramiz va foydani sizga topshiramiz.",
+      form_eyebrow: "Qayta aloqa", form_title: "Biznesingizni bugun boshlang", form_sub: "Kontaktlaringizni qoldiring. Bizning yetakchi tahlilchimiz siz bilan bogʻlanadi, gʻoyangizni bepul audit qiladi va aniq smetani hisoblab beradi.",
+      f_name: "Ismingiz", f_phone: "Telefon raqamingiz", f_budget: "Sizning boshlangʻich budjetingiz", f_comm: "Afzal koʻrilgan aloqa usuli", f_call: "Qoʻngʻiroq",
+      opt_b0: "Investitsiya miqdorini tanlang", opt_b1: "$1,500 gacha", opt_b2: "$1,500 – $4,000", opt_b3: "$4,000 – $10,000", opt_b4: "$10,000 dan ortiq",
+      form_submit: "Ariza yuborish", form_note: "Tugmani bosish orqali siz shaxsiy maʼlumotlarni qayta ishlashga rozilik bildirasiz.",
+      foot_sub: "Marketpleyslarda avtomatlashtirish va ilgari surish boʻyicha rasmiy IT-hamkor."
     }
   };
 
-  function selectChip(type, element) {
-    if (type === 'pkg') {
-      document.querySelectorAll('#pkgChips .chip').forEach(c => c.classList.remove('active'));
-      element.classList.add('active');
-      activePackagePrice = parseInt(element.getAttribute('data-value'));
-      activePackageName = element.querySelector('[data-key]').innerText;
-    }
-    calculateTotal();
-  }
+  let currentLang = 'ru';
 
-  function updateSliderVal(val) {
-    const currentLang = document.getElementById('langSelect').value;
-    const unit = currentLang === 'uz' ? ' dona' : ' шт';
-    document.getElementById('sliderVal').innerText = val + unit;
-    calculateTotal();
-  }
+  function changeLang(lang, element) {
+    currentLang = lang;
+    
+    // Переключение активного класса в навбаре
+    document.querySelectorAll('.nav-lang-opt').forEach(opt => opt.classList.remove('active'));
+    if (element) element.classList.add('active');
+    document.getElementById('langDropBtn').textContent = lang.toUpperCase();
+    document.getElementById('langDropWrap').classList.remove('open');
 
-  function toggleSupportCard() {
-    const card = document.getElementById('supportCard');
-    const input = document.getElementById('calcSupport');
-    input.checked = !input.checked;
-    card.classList.toggle('active', input.checked);
-    calculateTotal();
-  }
+    const data = langData[lang];
 
-  function orderService(name, price) {
-    const currentLang = document.getElementById('langSelect').value;
-    document.getElementById('calcData').value = `Разовая услуга: ${name} — ${price}`;
-    scrollToForm();
-    if (currentLang === 'uz') {
-      document.getElementById('submitBtn').innerText = `🔥 "${name}" xizmatini buyurtma berish`;
-    } else {
-      document.getElementById('submitBtn').innerText = `🔥 Заказать услугу: ${name}`;
-    }
-  }
-
-  function changeLanguage(lang) {
-    const elements = document.querySelectorAll('[data-key]');
-    elements.forEach(el => {
+    // Перевод обычных data-key
+    document.querySelectorAll('[data-key]').forEach(el => {
       const key = el.getAttribute('data-key');
-      if (langData[lang] && langData[lang][key]) {
-        el.innerHTML = langData[lang][key];
+      if (data[key]) {
+        el.innerHTML = data[key];
       }
     });
-    if (lang === 'uz') {
-      document.getElementById('fname').placeholder = "Askar";
-      document.getElementById('f_sub_bold').innerText = "15 daqiqa";
-    } else {
-      document.getElementById('fname').placeholder = "Аскар";
-      document.getElementById('f_sub_bold').innerText = "15 минут";
+
+    // Специальная обработка для заголовка Hero (так как там тег span)
+    if (data.hero_title_html) {
+      document.getElementById('heroTitle').innerHTML = data.hero_title_html;
     }
-    updateSliderVal(document.getElementById('cardSlider').value);
+
+    // Перевод плейсхолдеров формы
+    document.getElementById('clientName').placeholder = lang === 'uz' ? 'Aleksandr' : 'Александр';
+    document.getElementById('clientPhone').placeholder = lang === 'uz' ? '+998 (90) 000-00-00' : '+998 (90) 000-00-00';
+
+    // Обновление текста калькулятора, если он запущен
+    updateSkuCalc(document.getElementById('skuRange').value);
+    
+    // Обновление селекта бюджета, если ничего не выбрано
+    const budgetSel = document.getElementById('budget');
+    if (!budgetSel.value) {
+      const key = 'opt_b0';
+      if (langData[lang] && langData[lang][key]) {
+        document.getElementById('budgetDropLabel').textContent = langData[lang][key];
+      }
+    }
+    
+    // Перерисовать опции выпадающего списка бюджета
+    const options = document.querySelectorAll('#budgetDropList .custom-select-option');
+    options.forEach((opt, idx) => {
+      const key = 'opt_b' + idx;
+      if (data[key]) {
+        opt.querySelector('span').innerText = data[key];
+      }
+    });
+  }
+
+  /* CUSTOM SELECTIONS DROP */
+  function toggleBudgetDrop() {
+    const wrap = document.getElementById('budgetDropWrap');
+    document.getElementById('langDropWrap').classList.remove('remove'); // убираем пересечения
+    wrap.classList.toggle('open');
+  }
+
+  function pickBudget(val, el) {
+    const labelText = el.querySelector('span').innerText;
+    document.getElementById('budgetDropLabel').textContent = labelText;
+    document.getElementById('budgetDropBtn').classList.toggle('selected', val !== '');
+    document.getElementById('budget').value = val;
+    
+    document.querySelectorAll('#budgetDropList .custom-select-option').forEach(opt => {
+      opt.classList.toggle('active', opt.getAttribute('data-value') === val);
+    });
+    
+    document.getElementById('budgetDropWrap').classList.remove('open');
+  }
+
+  // Закрытие дропдаунов по клику вовне
+  document.addEventListener('click', function(e) {
+    const bWrap = document.getElementById('budgetDropWrap');
+    if (bWrap && !bWrap.contains(e.target)) bWrap.classList.remove('open');
+    
+    const lWrap = document.getElementById('langDropWrap');
+    if (lWrap && !lWrap.contains(e.target)) lWrap.classList.remove('open');
+  });
+
+  document.getElementById('langDropBtn').addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('budgetDropWrap').classList.remove('open');
+    document.getElementById('langDropWrap').classList.toggle('open');
+  });
+
+
+  /* КАЛЬКУЛЯТОР СТОИМОСТИ */
+  let calcCategoryIdx = 0; // 0: одежда (+150), 1: электроника (+120), 2: аксессуары (+80)
+  let calcOptions = [true, false, false, false]; // [юрлицо, китай, фото, 1с]
+
+  const catPrices = [150, 120, 80];
+  const optPrices = [100, 200, 180, 350];
+
+  function setCategory(idx, el) {
+    calcCategoryIdx = idx;
+    document.querySelectorAll('#calc .chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    calculateTotal();
+  }
+
+  function updateSkuCalc(val) {
+    document.getElementById('skuRange').value = val;
+    // Текст над слайдером с учетом языка
+    if (currentLang === 'uz') {
+      document.getElementById('skuCountText').innerText = val;
+    } else {
+      document.getElementById('skuCountText').innerText = val;
+    }
+
+    // Расчет цены за SKU: базово $4 за штуку, но оптом дешевле (от 40 SKU по $3.2, от 75 по $2.5)
+    let pricePerSku = 5;
+    if (val > 30) pricePerSku = 4;
+    if (val > 70) pricePerSku = 3;
+    let skuCost = Math.round(val * pricePerSku);
+
+    document.getElementById('skuPriceVal').innerText = '+$' + skuCost;
+    calculateTotal();
+  }
+
+  function toggleOpt(idx, el) {
+    calcOptions[idx] = !calcOptions[idx];
+    el.classList.toggle('active', calcOptions[idx]);
+    el.querySelector('.calc-checkbox').checked = calcOptions[idx];
+    calculateTotal();
   }
 
   function calculateTotal() {
-    const extraCardsCount = parseInt(document.getElementById('cardSlider').value);
-    const extraCardsPrice = extraCardsCount * 35000;
-    const isSupportChecked = document.getElementById('calcSupport').checked;
-    const supportPrice = isSupportChecked ? 1490000 : 0;
-    const currentLang = document.getElementById('langSelect').value;
-    const currencyText = currentLang === 'uz' ? ' soʻm' : ' сум';
-    const totalNew = activePackagePrice + extraCardsPrice + supportPrice;
-    let totalOld = Math.round((totalNew * 1.35) / 50000) * 50000;
-    document.getElementById('totalPriceOld').innerText = totalOld.toLocaleString('fr-FR') + currencyText;
-    document.getElementById('totalPriceNew').innerText = totalNew.toLocaleString('fr-FR') + currencyText;
-    document.getElementById('calcData').value = `Пакет: ${activePackageName}, Доп.карточки: ${extraCardsCount} шт (${extraCardsPrice.toLocaleString('fr-FR')} сум), Сопровождение: ${isSupportChecked ? 'Да' : 'Нет'}, Итого: ${totalNew.toLocaleString('fr-FR')} сум`;
+    let basePrice = catPrices[calcCategoryIdx];
+    
+    let skuVal = parseInt(document.getElementById('skuRange').value);
+    let pricePerSku = 5;
+    if (skuVal > 30) pricePerSku = 4;
+    if (skuVal > 70) pricePerSku = 3;
+    let skuCost = Math.round(skuVal * pricePerSku);
+
+    let optionsCost = 0;
+    for(let i=0; i<calcOptions.length; i++) {
+      if (calcOptions[i]) optionsCost += optPrices[i];
+    }
+
+    let totalOld = basePrice + skuCost + optionsCost;
+    // Скидка за комплексность: если выбрано много опций — скидка больше
+    let selectedOptsCount = calcOptions.filter(Boolean).length;
+    let discountPercent = 0.1 + (selectedOptsCount * 0.05); // от 10% до 30%
+    let totalNew = Math.round(totalOld * (1 - discountPercent));
+
+    document.getElementById('calcOldPrice').innerText = '$' + totalOld;
+    document.getElementById('calcNewPrice').innerText = '$' + totalNew;
   }
 
   function applyCalcToForm() {
-    scrollToForm();
-    const currentLang = document.getElementById('langSelect').value;
-    if (currentLang === 'uz') {
-      document.getElementById('submitBtn').innerText = "🔥 Hisob boʻyicha arizani yuborish";
-    } else {
-      document.getElementById('submitBtn').innerText = "🔥 Отправить заявку по расчету";
-    }
+    let catName = "Одежда";
+    if(calcCategoryIdx === 1) catName = "Электроника";
+    if(calcCategoryIdx === 2) catName = "Аксессуары";
+    
+    let optsText = [];
+    if(calcOptions[0]) optsText.push("Регистрация ООО");
+    if(calcOptions[1]) optsText.push("Поиск в Китае");
+    if(calcOptions[2]) optsText.push("Фотосессия");
+    if(calcOptions[3]) optsText.push("Интеграция 1С");
+
+    let skuVal = document.getElementById('skuRange').value;
+    let finalPrice = document.getElementById('calcNewPrice').innerText;
+
+    let details = `Категория: ${catName}, SKU: ${skuVal}, Опции: [${optsText.join(', ')}], Итоговая цена из калькулятора: ${finalPrice}`;
+    document.getElementById('calculatorDetails').value = details;
+
+    // Плавный скролл к форме
+    document.getElementById('form').scrollIntoView({ behavior: 'smooth' });
+    
+    // Эффектная подсветка кнопки отправки
+    const sBtn = document.getElementById('submitBtn');
+    sBtn.style.transform = 'scale(1.03)';
+    setTimeout(() => { sBtn.style.transform = 'none'; }, 400);
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.pain-card, .pkg-card, .sub-card, .step, .calc-container, .srv-card').forEach(el => observer.observe(el));
-
-  window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    nav.style.background = window.scrollY > 60 ? 'rgba(12,12,14,0.97)' : 'rgba(12,12,14,0.8)';
-  });
-
-  document.getElementById('phone').addEventListener('input', function() {
-    let v = this.value.replace(/\D/g, '');
-    if (v.startsWith('998')) v = v.slice(3);
-    if (v.length > 9) v = v.slice(0, 9);
-    let f = '+998';
-    if (v.length > 0) f += ' ' + v.slice(0, 2);
-    if (v.length > 2) f += ' ' + v.slice(2, 5);
-    if (v.length > 5) f += ' ' + v.slice(5, 7);
-    if (v.length > 7) f += ' ' + v.slice(7, 9);
-    this.value = f;
-  });
-
-  document.querySelectorAll('input[name="contact"]').forEach(r => {
-    r.addEventListener('change', () => {
-      document.getElementById('rl-call').classList.toggle('active', r.value !== 'tg');
-      document.getElementById('rl-tg').classList.toggle('active', r.value === 'tg');
-    });
-  });
-
-  function scrollToForm() {
+  /* ДЕЙСТВИЯ ПРИ ВЫБОРЕ ТАРИФОВ ИЛИ УСЛУГ */
+  function selectPkg(name, price) {
+    document.getElementById('calculatorDetails').value = `Выбран готовый пакет: "${name}" за $${price}`;
     document.getElementById('form').scrollIntoView({ behavior: 'smooth' });
   }
 
-  function handleSubmit() {
-    const btn = document.getElementById('submitBtn');
-    const name = document.getElementById('fname').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const contactMethod = document.querySelector('input[name="contact"]:checked').value;
+  function selectSrv(name, price) {
+    document.getElementById('calculatorDetails').value = `Выбрана отдельная услуга: "${name}" (Базовый прайс: ${price})`;
+    document.getElementById('form').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function setContactMethod(val, el) {
+    document.querySelectorAll('.radio-label').forEach(lbl => lbl.classList.remove('active'));
+    el.classList.add('active');
+    el.querySelector('input').checked = true;
+  }
+
+  /* СКРИПТ ОТПРАВКИ ЛИДА В ТЕЛЕГРАМ БОТ */
+  function sendLead() {
+    const name = document.getElementById('clientName').value.trim();
+    const phone = document.getElementById('clientPhone').value.trim();
     const budget = document.getElementById('budget').value;
-    const calculatorDetails = document.getElementById('calcData').value;
-    const currentLang = document.getElementById('langSelect').value;
+    const contactMethod = document.querySelector('input[name="comm"]:checked').value;
+    const calculatorDetails = document.getElementById('calculatorDetails').value;
+    const btn = document.getElementById('submitBtn');
 
     if (!name || phone.length < 10) {
       alert(currentLang === 'uz'
@@ -1366,75 +1193,39 @@
     })
     .then(response => {
       if (response.ok) {
-        btn.textContent = currentLang === 'uz'
-          ? '✅ Arizangiz yuborildi! 15 daqiqada bogʻlanamiz.'
-          : '✅ Заявка отправлена! Свяжемся за 15 минут.';
-        btn.style.background = '#10b981';
-      } else { throw new Error(); }
+        btn.textContent = currentLang === 'uz' ? '✅ Muvaffaqiyatli yuborildi!' : '✅ Успешно отправлено!';
+        btn.style.background = '#1a7a4a';
+        // Сброс формы
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPhone').value = '';
+      } else {
+        throw new Error();
+      }
     })
     .catch(() => {
-      btn.textContent = currentLang === 'uz' ? '❌ Xatolik. Qaytadan urinib koʻring' : '❌ Ошибка. Попробуйте еще раз';
+      alert(currentLang === 'uz' ? 'Xatolik yuz berdi. Keyinroq qayta urinib koʻring.' : 'Произошла ошибка. Пожалуйста, попробуйте позже.');
+      btn.textContent = currentLang === 'uz' ? 'Yana urinish' : 'Повторить попытку';
       btn.disabled = false;
     });
   }
 
-  calculateTotal();
+  /* АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ ПРИ СКРОЛЛЕ (Intersection Observer) */
+  document.addEventListener("DOMContentLoaded", function() {
+    // Инициализируем расчет калькулятора стартовым значением
+    updateSkuCalc(15);
 
-  /* ===== КАСТОМНЫЕ ВЫПАДАЮЩИЕ МЕНЮ ===== */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
 
-  // Закрывать все дропдауны при клике вне
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#langDropWrap')) {
-      const el = document.getElementById('langDropWrap');
-      if (el) el.classList.remove('open');
-    }
-    if (!e.target.closest('#budgetDropWrap')) {
-      const el = document.getElementById('budgetDropWrap');
-      if (el) el.classList.remove('open');
-    }
+    document.querySelectorAll('.scroll-anim, .pain-card, .pkg-card, .sub-card, .step, .calc-container').forEach(el => {
+      observer.observe(el);
+    });
   });
-
-  function toggleLangDrop() {
-    const wrap = document.getElementById('langDropWrap');
-    document.getElementById('budgetDropWrap').classList.remove('open');
-    wrap.classList.toggle('open');
-  }
-
-  function pickLang(val) {
-    document.getElementById('langDropLabel').textContent = val.toUpperCase();
-    const sel = document.getElementById('langSelect');
-    sel.value = val;
-    document.querySelectorAll('#langDropList .custom-select-option').forEach(opt => {
-      opt.classList.toggle('active', opt.getAttribute('data-value') === val);
-    });
-    document.getElementById('langDropWrap').classList.remove('open');
-    changeLanguage(val);
-    // Обновляем placeholder бюджетного дропдауна если ничего не выбрано
-    const budgetSel = document.getElementById('budget');
-    if (!budgetSel.value) {
-      const key = 'opt_b0';
-      if (langData[val] && langData[val][key]) {
-        document.getElementById('budgetDropLabel').textContent = langData[val][key];
-      }
-    }
-  }
-
-  function toggleBudgetDrop() {
-    const wrap = document.getElementById('budgetDropWrap');
-    document.getElementById('langDropWrap').classList.remove('open');
-    wrap.classList.toggle('open');
-  }
-
-  function pickBudget(val, el) {
-    const labelText = el.querySelector('span').innerText;
-    document.getElementById('budgetDropLabel').textContent = labelText;
-    document.getElementById('budgetDropBtn').classList.toggle('selected', val !== '');
-    document.getElementById('budget').value = val;
-    document.querySelectorAll('#budgetDropList .custom-select-option').forEach(opt => {
-      opt.classList.toggle('active', opt.getAttribute('data-value') === val);
-    });
-    document.getElementById('budgetDropWrap').classList.remove('open');
-  }
 
   /* Фоновая картинка hero: если CSS-переменная --hero-bg-image задана, убираем класс empty */
   (function() {
@@ -1447,5 +1238,6 @@
     }
   })();
 </script>
+
 </body>
 </html>
