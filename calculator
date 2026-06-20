@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор прибыли на Uzum Market | U-Hub</title>
+<meta name="description" content="Бесплатный калькулятор: рассчитайте чистую прибыль, маржинальность и ROI товара на Uzum Market с учётом закупки в Китае, комиссии маркетплейса, логистического сбора и хранения на складе.">
+<meta name="theme-color" content="#0C0C0E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230C0C0E'/%3E%3Ctext x='50' y='73' font-family='Arial,sans-serif' font-size='60' font-weight='900' fill='%23FF5C00' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Unbounded:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #FF5C00;
+    --orange-light: #FF8A3D;
+    --orange-dim: rgba(255,92,0,0.12);
+    --orange-glow: rgba(255,92,0,0.45);
+    --dark: #0C0C0E;
+    --dark2: #141417;
+    --dark3: #1C1C21;
+    --dark4: #252529;
+    --text: #F5F5F5;
+    --text-muted: rgba(245,245,245,0.58);
+    --text-dim: rgba(245,245,245,0.32);
+    --border: rgba(255,255,255,0.08);
+    --border-bright: rgba(255,92,0,0.35);
+    --r-xs: 8px; --r-sm: 12px; --r-md: 16px; --r-lg: 20px; --r-xl: 24px; --r-2xl: 28px; --r-pill: 100px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.35);
+    --shadow-lg: 0 24px 60px rgba(0,0,0,0.5);
+    --shadow-orange: 0 16px 48px rgba(255,92,0,0.32);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --container: 1140px;
+  }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+  body {
+    background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif;
+    overflow-x: hidden; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility; font-feature-settings: "cv11", "ss01";
+  }
+  .tnum { font-variant-numeric: tabular-nums; }
+  ::selection { background: var(--orange); color: #fff; }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--dark4); border-radius: 5px; border: 2px solid var(--dark); }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 4px; }
+
+  /* SKIP LINK */
+  .skip-link {
+    position: absolute; left: 16px; top: -60px; z-index: 300;
+    background: var(--orange); color: #fff; padding: 10px 18px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; text-decoration: none; transition: top 0.25s ease;
+  }
+  .skip-link:focus { top: 16px; }
+
+  /* GRAIN + ORBS */
+  .grain {
+    position: fixed; inset: 0; z-index: 998; pointer-events: none;
+    opacity: 0.035; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grainShift 8s steps(6) infinite;
+  }
+  @keyframes grainShift {
+    0% { transform: translate(0,0); } 20% { transform: translate(2%,-3%); } 40% { transform: translate(3%,-2%); }
+    60% { transform: translate(2%,2%); } 80% { transform: translate(1%,-2%); } 100% { transform: translate(0,0); }
+  }
+  .orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: -1; filter: blur(110px); animation: orbFloat 18s ease-in-out infinite; opacity: 0.05; }
+  .orb1 { width: 600px; height: 600px; background: var(--orange); top: -150px; right: -150px; }
+  .orb2 { width: 450px; height: 450px; background: #FF3B00; bottom: 10%; left: -150px; animation-duration: 24s; animation-delay: -6s; }
+  @keyframes orbFloat { 0%,100%{ transform:translateY(0) rotate(0deg);} 33%{ transform:translateY(-40px) rotate(4deg);} 66%{ transform:translateY(25px) rotate(-3deg);} }
+
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(90deg, var(--orange), var(--orange-light));
+    z-index: 200; box-shadow: 0 0 12px var(--orange-glow); transition: width 0.08s linear;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: rgba(12,12,14,0.72); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid transparent; transition: background 0.4s ease, border-color 0.4s ease, padding 0.4s ease;
+  }
+  nav.scrolled { background: rgba(12,12,14,0.92); border-bottom: 1px solid var(--border); padding: 12px 40px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
+  .nav-logo { font-family: 'Unbounded', sans-serif; font-size: 18px; color: var(--text); letter-spacing: -0.5px; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo .logo-dot { width: 9px; height: 9px; border-radius: 3px; background: var(--orange); box-shadow: 0 0 14px var(--orange-glow); transform: rotate(45deg); animation: logoPulse 3s var(--ease-out) infinite; }
+  @keyframes logoPulse { 0%,100% { box-shadow: 0 0 14px var(--orange-glow); transform: rotate(45deg) scale(1); } 50% { box-shadow: 0 0 22px var(--orange-glow); transform: rotate(45deg) scale(1.12); } }
+  .nav-logo span { color: var(--orange); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-back {
+    display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); text-decoration: none;
+    font-size: 14px; font-weight: 500; transition: color 0.2s ease;
+  }
+  .nav-back:hover { color: var(--text); }
+  .nav-back svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .nav-cta {
+    background: var(--orange); color: #fff; border: none; border-radius: var(--r-sm); padding: 10px 22px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.25s ease, transform 0.25s var(--ease-out), box-shadow 0.25s ease;
+    font-family: 'Inter', sans-serif; text-decoration: none; box-shadow: 0 4px 16px rgba(255,92,0,0.28);
+  }
+  .nav-cta:hover { background: var(--orange-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,92,0,0.45); }
+
+  /* CUSTOM LANG DROPDOWN */
+  .custom-select-wrap { position: relative; display: inline-flex; align-items: center; }
+  .custom-select-btn {
+    background: var(--dark3); color: var(--text); border: 1px solid var(--border); padding: 8px 34px 8px 14px;
+    border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s ease; user-select: none; display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  }
+  .custom-select-wrap:hover .custom-select-btn, .custom-select-wrap.open .custom-select-btn { border-color: var(--border-bright); }
+  .custom-select-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; display: flex; transition: transform 0.2s ease; }
+  .custom-select-wrap.open .custom-select-arrow { transform: translateY(-50%) rotate(180deg); }
+  .custom-select-arrow svg { width: 14px; height: 14px; stroke: var(--text-muted); fill: none; stroke-width: 2.5; }
+  .custom-select-list {
+    position: absolute; top: calc(100% + 6px); right: 0; min-width: 100%; width: max-content;
+    background: var(--dark3); border: 1px solid var(--border-bright); border-radius: 12px; overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5); z-index: 999;
+    opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .custom-select-wrap.open .custom-select-list { opacity: 1; transform: translateY(0); pointer-events: all; }
+  .custom-select-option {
+    padding: 12px 18px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease; display: flex; align-items: center; gap: 10px; white-space: nowrap;
+  }
+  .custom-select-option:hover { background: var(--dark4); color: var(--text); }
+  .custom-select-option.active { background: var(--orange-dim); color: var(--text); }
+  .custom-select-option + .custom-select-option { border-top: 1px solid var(--border); }
+  .custom-select-option .opt-check { width: 16px; height: 16px; flex-shrink: 0; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; transition: all 0.15s ease; }
+  .custom-select-option.active .opt-check { background: var(--orange); border-color: var(--orange); }
+  .custom-select-option.active .opt-check::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+  /* LAYOUT */
+  .section-wrap { max-width: var(--container); margin: 0 auto; padding: 0 40px; }
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 40px; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--orange); opacity: 0.6; }
+  @keyframes rise { to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+
+  /* PAGE HEADER */
+  .page-head { padding: 150px 40px 56px; text-align: center; }
+  .page-head h1 {
+    font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 4.2vw, 48px); font-weight: 800;
+    letter-spacing: -1.5px; line-height: 1.12; margin: 0 auto 16px; max-width: 760px; text-wrap: balance;
+    opacity: 0; filter: blur(10px); transform: translateY(24px); animation: rise 0.8s var(--ease-out) 0.1s forwards;
+  }
+  .page-head .eyebrow { justify-content: center; opacity: 0; filter: blur(8px); transform: translateY(16px); animation: rise 0.7s var(--ease-out) forwards; }
+  .page-head p { font-size: 16px; color: var(--text-muted); max-width: 560px; margin: 0 auto; line-height: 1.7;
+    opacity: 0; filter: blur(8px); transform: translateY(20px); animation: rise 0.8s var(--ease-out) 0.2s forwards; }
+
+  /* CALCULATOR GRID */
+  .calc2-section { padding: 56px 40px 100px; }
+  .calc2-grid { display: grid; grid-template-columns: 1.25fr 0.85fr; gap: 28px; align-items: start; max-width: var(--container); margin: 0 auto; }
+  @media(max-width: 980px) { .calc2-grid { grid-template-columns: 1fr; } }
+  .calc2-cards { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+  .calc2-card {
+    background: var(--dark2); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 28px;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s var(--ease-out), border-color 0.3s ease;
+  }
+  .calc2-card.visible { opacity: 1; transform: translateY(0); }
+  .calc2-card::before {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(255,92,0,0.4), transparent 45%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+  }
+  .calc2-card:hover::before { opacity: 1; }
+  .calc2-card-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; position: relative; z-index: 1; }
+  .calc2-num {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--dark3); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; font-family: 'Unbounded', sans-serif;
+    font-weight: 800; color: var(--orange); font-size: 14px; flex-shrink: 0;
+  }
+  .calc2-card-title { font-family: 'Unbounded', sans-serif; font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+  .calc2-card-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+
+  .calc2-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; position: relative; z-index: 1; }
+  @media(max-width: 560px) { .calc2-fields { grid-template-columns: 1fr 1fr; } }
+  .calc2-field label { font-size: 12px; color: var(--text-muted); margin-bottom: 7px; display: block; font-weight: 500; }
+  .calc2-input {
+    width: 100%; padding: 12px 14px; background: var(--dark3); border: 1px solid var(--border); border-radius: var(--r-sm);
+    color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; appearance: none; -webkit-appearance: none;
+  }
+  .calc2-input:focus { border-color: var(--border-bright); box-shadow: 0 0 0 4px rgba(255,92,0,0.08); }
+  /* убираем нативные стрелки number-инпута — свой UI аккуратнее */
+  .calc2-input::-webkit-outer-spin-button, .calc2-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .calc2-input[type=number] { -moz-appearance: textfield; }
+
+  .calc2-output-row {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    padding: 14px 0 0; margin-top: 18px; border-top: 1px solid var(--border); position: relative; z-index: 1;
+  }
+  .calc2-output-label { font-size: 13px; color: var(--text-muted); }
+  .calc2-output-value { font-family: 'Unbounded', sans-serif; font-weight: 800; color: var(--orange); font-size: 18px; white-space: nowrap; }
+  .calc2-note { font-size: 12px; color: var(--text-dim); margin-top: 10px; line-height: 1.6; position: relative; z-index: 1; }
+
+  .calc2-tier-badge {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600;
+    padding: 7px 14px; border-radius: var(--r-pill); background: var(--orange-dim); color: var(--orange-light);
+    margin-top: 16px; position: relative; z-index: 1; transition: background 0.25s ease, color 0.25s ease;
+  }
+  .calc2-tier-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .calc2-tier-badge.free { background: rgba(80,200,140,0.12); color: #6FE3A8; }
+  .calc2-tier-badge.free::before { background: #3DDC8A; }
+
+  /* RANGE SLIDER (переиспользуем стиль с лендинга) */
+  .calc2-range-box { display: flex; align-items: center; gap: 16px; background: var(--dark3); border: 1px solid var(--border); padding: 12px 18px; border-radius: var(--r-md); position: relative; z-index: 1; }
+  .calc2-range-slider {
+    flex: 1; accent-color: var(--orange); cursor: pointer; height: 6px; border-radius: 3px;
+    -webkit-appearance: none; appearance: none; background: var(--dark4); outline: none;
+  }
+  .calc2-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--orange);
+    cursor: pointer; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 12px var(--orange-glow);
+    transition: transform 0.2s var(--ease-spring);
+  }
+  .calc2-range-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+  .calc2-range-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--orange); cursor: pointer; border: 3px solid #fff; }
+  .calc2-range-val { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: var(--orange); min-width: 76px; text-align: right; white-space: nowrap; }
+
+  /* СВОРАЧИВАЕМЫЕ ПАНЕЛИ (тарифы / курсы валют) */
+  .calc2-toggle-btn {
+    display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; padding: 0;
+    margin-top: 16px; position: relative; z-index: 1; transition: color 0.2s ease;
+  }
+  .calc2-toggle-btn:hover { color: var(--orange-light); }
+  .calc2-toggle-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; transition: transform 0.3s var(--ease-spring); }
+  .calc2-toggle-btn.open svg { transform: rotate(180deg); }
+  .calc2-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease-out); position: relative; z-index: 1; }
+  .calc2-collapse.open { grid-template-rows: 1fr; }
+  .calc2-collapse-inner { overflow: hidden; }
+
+  .calc2-mini-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 14px; }
+  @media(max-width: 480px) { .calc2-mini-fields { grid-template-columns: 1fr; } }
+
+  .calc2-tariff-table { padding-top: 14px; font-size: 13px; }
+  .calc2-tariff-table table { width: 100%; border-collapse: collapse; }
+  .calc2-tariff-table th { text-align: left; color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding-bottom: 8px; }
+  .calc2-tariff-table td { padding: 7px 0; color: var(--text-muted); border-top: 1px solid var(--border); }
+  .calc2-tariff-table td:last-child, .calc2-tariff-table th:last-child { text-align: right; color: var(--text); }
+  .calc2-tariff-group-title { font-size: 12px; font-weight: 700; color: var(--text); margin: 14px 0 6px; }
+  .calc2-tariff-group-title:first-child { margin-top: 0; }
+
+  /* RESULTS PANEL */
+  .calc2-result {
+    background: var(--dark2); border: 1px solid var(--border-bright); border-radius: var(--r-2xl); padding: 32px;
+    position: sticky; top: 96px; opacity: 0; transform: translateY(24px);
+    transition: opacity 0.5s ease 0.1s, transform 0.5s var(--ease-out) 0.1s; overflow: hidden;
+  }
+  .calc2-result.visible { opacity: 1; transform: translateY(0); }
+  .calc2-result::before {
+    content: ''; position: absolute; top: -40%; right: -20%; width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(255,92,0,0.08) 0%, transparent 60%); pointer-events: none;
+  }
+  @media(max-width: 980px) { .calc2-result { position: static; } }
+  .calc2-result-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; position: relative; z-index: 1; }
+  .calc2-result-value { font-family: 'Unbounded', sans-serif; font-size: clamp(28px, 4vw, 38px); font-weight: 800; color: var(--orange); margin-bottom: 24px; line-height: 1.05; position: relative; z-index: 1; word-break: break-word; }
+
+  .calc2-metrics { display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1; }
+  .calc2-metric { flex: 1; min-width: 0; background: var(--dark3); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
+  .calc2-metric:hover { border-color: var(--border-bright); background: var(--dark4); }
+  .calc2-metric-val { font-family: 'Unbounded', sans-serif; font-weight: 800; font-size: 19px; }
+  .calc2-metric-label { font-size: 11px; color: var(--text-muted); margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+  .calc2-metric-label svg { width: 11px; height: 11px; stroke: var(--text-dim); fill: none; stroke-width: 2; flex-shrink: 0; }
+  .calc2-metric-info { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-out); }
+  .calc2-metric-info.open { grid-template-rows: 1fr; }
+  .calc2-metric-info-inner { overflow: hidden; }
+  .calc2-metric-info p { font-size: 12px; color: var(--text-muted); line-height: 1.6; padding-top: 14px; position: relative; z-index: 1; }
+
+  .calc2-breakdown { margin-bottom: 22px; border-top: 1px solid var(--border); padding-top: 16px; position: relative; z-index: 1; }
+  .calc2-breakdown-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .calc2-breakdown-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--text-muted); padding: 5px 0; }
+  .calc2-breakdown-row .neg { color: rgba(255,130,100,0.85); }
+  .calc2-breakdown-row.total { color: var(--text); font-weight: 700; font-size: 14px; border-top: 1px solid var(--border); margin-top: 6px; padding-top: 12px; }
+  .calc2-breakdown-row.total span:last-child { color: var(--orange); }
+
+  .calc2-disclaimer { font-size: 11.5px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; position: relative; z-index: 1; }
+
+  .calc2-cta-btn {
+    width: 100%; background: var(--orange); color: #fff; border: none; border-radius: var(--r-md); padding: 15px 24px;
+    font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+    box-shadow: 0 10px 28px rgba(255,92,0,0.3); position: relative; z-index: 1;
+  }
+  .calc2-cta-btn:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: var(--shadow-orange); }
+  .calc2-cta-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+  /* BOTTOM CTA STRIP */
+  .calc2-bottom-cta {
+    max-width: var(--container); margin: 0 auto 100px; padding: 0 40px;
+  }
+  .calc2-bottom-cta-inner {
+    background: var(--dark2); border: 1px solid var(--border); border-radius: 28px; padding: 44px 40px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .calc2-bottom-cta-inner::before {
+    content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 460px; height: 460px;
+    background: radial-gradient(circle, rgba(255,92,0,0.07) 0%, transparent 65%); pointer-events: none;
+  }
+  .calc2-bottom-cta-inner h2 { font-family: 'Unbounded', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; position: relative; z-index: 1; }
+  .calc2-bottom-cta-inner p { font-size: 15px; color: var(--text-muted); max-width: 480px; margin: 0 auto 28px; line-height: 1.7; position: relative; z-index: 1; }
+  .btn-primary {
+    background: var(--orange); color: #fff; border: none; border-radius: var(--r-md); padding: 16px 32px;
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
+    font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    box-shadow: 0 8px 24px rgba(255,92,0,0.3); position: relative; z-index: 1;
+  }
+  .btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); box-shadow: var(--shadow-orange); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 48px 40px; text-align: center; color: var(--text-dim); font-size: 14px; }
+  .foot-logo { font-family: 'Unbounded', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+  .foot-logo span { color: var(--orange); }
+
+  @media(max-width: 600px) {
+    nav { padding: 14px 20px; }
+    .page-head { padding: 130px 20px 44px; }
+    .section-wrap, .calc2-section, .calc2-bottom-cta { padding-left: 20px; padding-right: 20px; }
+    .calc2-card { padding: 22px; }
+    .calc2-bottom-cta-inner { padding: 32px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#calcMain" class="skip-link">Перейти к калькулятору</a>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo"><span class="logo-dot"></span>U<span>-HUB</span></a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back" data-key="nav_back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span data-key="nav_back_text">На главную</span>
+    </a>
+    <div class="custom-select-wrap" id="langDropWrap">
+      <div class="custom-select-btn" id="langDropBtn" onclick="toggleLangDrop()"><span id="langDropLabel">RU</span></div>
+      <div class="custom-select-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="custom-select-list" id="langDropList">
+        <div class="custom-select-option active" data-value="ru" onclick="pickLang('ru')"><div class="opt-check"></div> RU — Русский</div>
+        <div class="custom-select-option" data-value="uz" onclick="pickLang('uz')"><div class="opt-check"></div> UZ — O'zbek</div>
+      </div>
+    </div>
+    <a href="index.html#form" class="nav-cta" data-key="nav_cta">Бесплатная консультация</a>
+  </div>
+</nav>
+
+<!-- PAGE HEAD -->
+<div class="page-head">
+  <div class="eyebrow" data-key="head_eyebrow">Калькулятор</div>
+  <h1 data-key="head_title">Сколько вы заработаете на Uzum Market</h1>
+  <p data-key="head_sub">Введите параметры товара — увидите чистую прибыль, маржинальность и ROI с учётом комиссии маркетплейса, логистики и хранения на складе Uzum.</p>
+</div>
+
+<!-- CALCULATOR -->
+<div class="calc2-section" id="calcMain">
+  <div class="calc2-grid">
+    <div class="calc2-cards">
+
+      <!-- CARD 1: ГАБАРИТЫ -->
+      <div class="calc2-card">
+        <div class="calc2-card-head">
+          <div class="calc2-num">1</div>
+          <div>
+            <div class="calc2-card-title" data-key="c1_title">Габариты товара</div>
+            <div class="calc2-card-sub" data-key="c1_sub">Нужны для расчёта объёма — от него зависят логистический сбор и стоимость хранения</div>
+          </div>
+        </div>
+        <div class="calc2-fields">
+          <div class="calc2-field">
+            <label for="dimL" data-key="c1_l">Длина, мм</label>
+            <input type="number" id="dimL" class="calc2-input tnum" value="100" min="1" step="1" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="dimW" data-key="c1_w">Ширина, мм</label>
+            <input type="number" id="dimW" class="calc2-input tnum" value="100" min="1" step="1" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="dimH" data-key="c1_h">Высота, мм</label>
+            <input type="number" id="dimH" class="calc2-input tnum" value="100" min="1" step="1" inputmode="decimal">
+          </div>
+        </div>
+        <div class="calc2-output-row">
+          <span class="calc2-output-label" data-key="c1_out">Объём товара</span>
+          <span class="calc2-output-value tnum" id="volumeOut">1,00 л</span>
+        </div>
+        <div class="calc2-note" data-key="c1_note">Формула Uzum: длина × ширина × высота / 1 000 000</div>
+      </div>
+
+      <!-- CARD 2: ХРАНЕНИЕ И ЛОГИСТИКА -->
+      <div class="calc2-card">
+        <div class="calc2-card-head">
+          <div class="calc2-num">2</div>
+          <div>
+            <div class="calc2-card-title" data-key="c2_title">Хранение и логистика на складе Uzum</div>
+            <div class="calc2-card-sub" data-key="c2_sub">Разовый сбор за приёмку + плата за хранение, если товар лежит дольше 60 дней</div>
+          </div>
+        </div>
+        <div class="calc2-field">
+          <label for="storageDays" data-key="c2_days">Ожидаемый срок до продажи, дней</label>
+          <div class="calc2-range-box">
+            <input type="range" id="storageDays" class="calc2-range-slider" min="0" max="400" step="1" value="30">
+            <div class="calc2-range-val tnum" id="storageDaysVal">30 дней</div>
+          </div>
+        </div>
+        <div class="calc2-tier-badge free" id="tierBadge">Бесплатное хранение (0–60 дней)</div>
+
+        <div class="calc2-output-row">
+          <span class="calc2-output-label" data-key="c2_out1">Логистический сбор (разово)</span>
+          <span class="calc2-output-value tnum" id="logisticsFeeOut">5 250 сум</span>
+        </div>
+        <div class="calc2-output-row">
+          <span class="calc2-output-label" data-key="c2_out2">Хранение за весь срок</span>
+          <span class="calc2-output-value tnum" id="storageFeeOut">0 сум</span>
+        </div>
+
+        <button class="calc2-toggle-btn" id="tariffToggleBtn" onclick="toggleCollapse('tariffPanel','tariffToggleBtn')">
+          <span data-key="c2_toggle">Показать тарифную сетку</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="calc2-collapse" id="tariffPanel">
+          <div class="calc2-collapse-inner">
+            <div class="calc2-tariff-table">
+              <div class="calc2-tariff-group-title" data-key="c2_tg1">Хранение (за литр в день)</div>
+              <table>
+                <tr><td data-key="c2_t1">0–60 дней</td><td data-key="c2_t1v">бесплатно</td></tr>
+                <tr><td data-key="c2_t2">61–180 дней</td><td data-key="c2_t2v">12 сум</td></tr>
+                <tr><td data-key="c2_t3">181–360 дней</td><td data-key="c2_t3v">18 сум</td></tr>
+                <tr><td data-key="c2_t4">361+ дней</td><td data-key="c2_t4v">24 сум</td></tr>
+                <tr><td data-key="c2_t5">Максимум</td><td data-key="c2_t5v">5 000 сум/товар в день</td></tr>
+              </table>
+              <div class="calc2-tariff-group-title" data-key="c2_tg2">Логистический сбор (с 01.06.2026)</div>
+              <table>
+                <tr><td data-key="c2_t6">До 1 литра</td><td data-key="c2_t6v">5 250 сум</td></tr>
+                <tr><td data-key="c2_t7">За каждый доп. литр</td><td data-key="c2_t7v">250 сум</td></tr>
+                <tr><td data-key="c2_t8">Максимум</td><td data-key="c2_t8v">50 000 сум</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: ЗАКУП В КИТАЕ -->
+      <div class="calc2-card">
+        <div class="calc2-card-head">
+          <div class="calc2-num">3</div>
+          <div>
+            <div class="calc2-card-title" data-key="c3_title">Закуп и доставка из Китая</div>
+            <div class="calc2-card-sub" data-key="c3_sub">Себестоимость товара до того, как он попал на склад Uzum</div>
+          </div>
+        </div>
+        <div class="calc2-fields">
+          <div class="calc2-field">
+            <label for="cnPrice" data-key="c3_price">Цена товара, ¥</label>
+            <input type="number" id="cnPrice" class="calc2-input tnum" value="15" min="0" step="0.1" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="cnWeight" data-key="c3_weight">Вес 1 шт, кг</label>
+            <input type="number" id="cnWeight" class="calc2-input tnum" value="0.2" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="cnCargo" data-key="c3_cargo">Тариф карго, $/кг</label>
+            <input type="number" id="cnCargo" class="calc2-input tnum" value="6" min="0" step="0.1" inputmode="decimal">
+          </div>
+        </div>
+
+        <button class="calc2-toggle-btn" id="rateToggleBtn" onclick="toggleCollapse('ratePanel','rateToggleBtn')">
+          <span data-key="c3_toggle">Курс: 1$ = 12 800 сум · 1$ = 7,25 ¥ · изменить</span>
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="calc2-collapse" id="ratePanel">
+          <div class="calc2-collapse-inner">
+            <div class="calc2-mini-fields">
+              <div class="calc2-field">
+                <label for="rateUsd" data-key="c3_rateUsd">Курс $ к суму</label>
+                <input type="number" id="rateUsd" class="calc2-input tnum" value="12800" min="1" step="1" inputmode="decimal">
+              </div>
+              <div class="calc2-field">
+                <label for="rateCny" data-key="c3_rateCny">Юаней за 1 $</label>
+                <input type="number" id="rateCny" class="calc2-input tnum" value="7.25" min="0.1" step="0.01" inputmode="decimal">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc2-output-row">
+          <span class="calc2-output-label" data-key="c3_out">Себестоимость в Китае</span>
+          <span class="calc2-output-value tnum" id="chinaCostOut">41 843 сум</span>
+        </div>
+      </div>
+
+      <!-- CARD 4: ЦЕНА ПРОДАЖИ -->
+      <div class="calc2-card">
+        <div class="calc2-card-head">
+          <div class="calc2-num">4</div>
+          <div>
+            <div class="calc2-card-title" data-key="c4_title">Цена продажи и комиссия Uzum</div>
+            <div class="calc2-card-sub" data-key="c4_sub">На основе планируемой розничной цены на маркетплейсе</div>
+          </div>
+        </div>
+        <div class="calc2-fields">
+          <div class="calc2-field">
+            <label for="salePrice" data-key="c4_price">Цена продажи, сум</label>
+            <input type="number" id="salePrice" class="calc2-input tnum" value="85000" min="0" step="1000" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="commissionPct" data-key="c4_comm">Комиссия Uzum, %</label>
+            <input type="number" id="commissionPct" class="calc2-input tnum" value="25" min="0" max="100" step="0.5" inputmode="decimal">
+          </div>
+          <div class="calc2-field">
+            <label for="fulfillCost" data-key="c4_fulfill">Фулфилмент и упаковка, сум/шт</label>
+            <input type="number" id="fulfillCost" class="calc2-input tnum" value="500" min="0" step="100" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RESULTS PANEL -->
+    <div class="calc2-result" id="resultPanel">
+      <div class="calc2-result-label" data-key="res_label">Чистая прибыль с 1 шт</div>
+      <div class="calc2-result-value tnum" id="netProfitOut">16 157 сум</div>
+
+      <div class="calc2-metrics">
+        <div class="calc2-metric" onclick="toggleMetricInfo('marginInfo')">
+          <div class="calc2-metric-val tnum" id="marginOut">19,01%</div>
+          <div class="calc2-metric-label">
+            <span data-key="res_margin">Маржинальность</span>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+          </div>
+        </div>
+        <div class="calc2-metric" onclick="toggleMetricInfo('roiInfo')">
+          <div class="calc2-metric-val tnum" id="roiOut">38,62%</div>
+          <div class="calc2-metric-label">
+            <span>ROI</span>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="calc2-metric-info" id="marginInfo">
+        <div class="calc2-metric-info-inner"><p data-key="res_margin_info">Маржинальность показывает, какая доля цены остаётся вам чистой прибылью. Чем выше показатель — тем устойчивее бизнес к скидкам и акциям.</p></div>
+      </div>
+      <div class="calc2-metric-info" id="roiInfo">
+        <div class="calc2-metric-info-inner"><p data-key="res_roi_info">ROI сравнивает чистую прибыль с деньгами, вложенными в закупку и доставку товара из Китая. Показывает, сколько прибыли приносит каждый вложенный сум.</p></div>
+      </div>
+
+      <div class="calc2-breakdown">
+        <div class="calc2-breakdown-title" data-key="res_bd_title">Из чего складывается</div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_sale">Цена продажи</span><span class="tnum" id="bdSale">85 000 сум</span></div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_comm">Комиссия Uzum</span><span class="neg tnum" id="bdCommission">−21 250 сум</span></div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_log">Логистический сбор</span><span class="neg tnum" id="bdLogistics">−5 250 сум</span></div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_storage">Хранение</span><span class="neg tnum" id="bdStorage">−0 сум</span></div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_fulfill">Фулфилмент и упаковка</span><span class="neg tnum" id="bdFulfill">−500 сум</span></div>
+        <div class="calc2-breakdown-row"><span data-key="res_bd_china">Себестоимость в Китае</span><span class="neg tnum" id="bdChina">−41 843 сум</span></div>
+        <div class="calc2-breakdown-row total"><span data-key="res_bd_net">Чистая прибыль</span><span class="tnum" id="bdNet">16 157 сум</span></div>
+      </div>
+
+      <div class="calc2-disclaimer" data-key="res_disclaimer">Расчёт ориентировочный. Точные тарифы и комиссии уточняйте в личном кабинете Uzum Market.</div>
+
+      <a href="index.html#form" class="calc2-cta-btn">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        <span data-key="res_cta">Оставить заявку на запуск</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BOTTOM CTA -->
+<div class="calc2-bottom-cta">
+  <div class="calc2-bottom-cta-inner">
+    <h2 data-key="bottom_title">Не хотите считать вручную?</h2>
+    <p data-key="bottom_sub">Возьмём на себя весь процесс — от закупки в Китае до прибыльных продаж на Uzum Market.</p>
+    <a href="index.html#form" class="btn-primary" data-key="bottom_btn">Получить бесплатную консультацию</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">U<span>-HUB</span></div>
+  <p data-key="foot_text">Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market</p>
+  <p style="margin-top:8px; font-size:12px;">© 2026 U-Hub. <span data-key="foot_rights">Все права защищены.</span></p>
+</footer>
+
+<script>
+  let currentLang = 'ru';
+
+  const langData = {
+    ru: {
+      nav_back_text: "На главную",
+      nav_cta: "Бесплатная консультация",
+      head_eyebrow: "Калькулятор",
+      head_title: "Сколько вы заработаете на Uzum Market",
+      head_sub: "Введите параметры товара — увидите чистую прибыль, маржинальность и ROI с учётом комиссии маркетплейса, логистики и хранения на складе Uzum.",
+      c1_title: "Габариты товара",
+      c1_sub: "Нужны для расчёта объёма — от него зависят логистический сбор и стоимость хранения",
+      c1_l: "Длина, мм", c1_w: "Ширина, мм", c1_h: "Высота, мм",
+      c1_out: "Объём товара",
+      c1_note: "Формула Uzum: длина × ширина × высота / 1 000 000",
+      c2_title: "Хранение и логистика на складе Uzum",
+      c2_sub: "Разовый сбор за приёмку + плата за хранение, если товар лежит дольше 60 дней",
+      c2_days: "Ожидаемый срок до продажи, дней",
+      c2_out1: "Логистический сбор (разово)",
+      c2_out2: "Хранение за весь срок",
+      c2_toggle: "Показать тарифную сетку",
+      c2_toggle_close: "Скрыть тарифную сетку",
+      c2_tg1: "Хранение (за литр в день)",
+      c2_t1: "0–60 дней", c2_t1v: "бесплатно",
+      c2_t2: "61–180 дней", c2_t2v: "12 сум",
+      c2_t3: "181–360 дней", c2_t3v: "18 сум",
+      c2_t4: "361+ дней", c2_t4v: "24 сум",
+      c2_t5: "Максимум", c2_t5v: "5 000 сум/товар в день",
+      c2_tg2: "Логистический сбор (с 01.06.2026)",
+      c2_t6: "До 1 литра", c2_t6v: "5 250 сум",
+      c2_t7: "За каждый доп. литр", c2_t7v: "250 сум",
+      c2_t8: "Максимум", c2_t8v: "50 000 сум",
+      tier_free: "Бесплатное хранение (0–60 дней)",
+      tier_2: "Тариф 12 сум/л в день (61–180 дней)",
+      tier_3: "Тариф 18 сум/л в день (181–360 дней)",
+      tier_4: "Тариф 24 сум/л в день (361+ дней)",
+      c3_title: "Закуп и доставка из Китая",
+      c3_sub: "Себестоимость товара до того, как он попал на склад Uzum",
+      c3_price: "Цена товара, ¥", c3_weight: "Вес 1 шт, кг", c3_cargo: "Тариф карго, $/кг",
+      c3_rateUsd: "Курс $ к суму", c3_rateCny: "Юаней за 1 $",
+      c3_out: "Себестоимость в Китае",
+      c4_title: "Цена продажи и комиссия Uzum",
+      c4_sub: "На основе планируемой розничной цены на маркетплейсе",
+      c4_price: "Цена продажи, сум", c4_comm: "Комиссия Uzum, %", c4_fulfill: "Фулфилмент и упаковка, сум/шт",
+      res_label: "Чистая прибыль с 1 шт",
+      res_margin: "Маржинальность",
+      res_margin_info: "Маржинальность показывает, какая доля цены остаётся вам чистой прибылью. Чем выше показатель — тем устойчивее бизнес к скидкам и акциям.",
+      res_roi_info: "ROI сравнивает чистую прибыль с деньгами, вложенными в закупку и доставку товара из Китая. Показывает, сколько прибыли приносит каждый вложенный сум.",
+      res_bd_title: "Из чего складывается",
+      res_bd_sale: "Цена продажи", res_bd_comm: "Комиссия Uzum", res_bd_log: "Логистический сбор",
+      res_bd_storage: "Хранение", res_bd_fulfill: "Фулфилмент и упаковка", res_bd_china: "Себестоимость в Китае",
+      res_bd_net: "Чистая прибыль",
+      res_disclaimer: "Расчёт ориентировочный. Точные тарифы и комиссии уточняйте в личном кабинете Uzum Market.",
+      res_cta: "Оставить заявку на запуск",
+      bottom_title: "Не хотите считать вручную?",
+      bottom_sub: "Возьмём на себя весь процесс — от закупки в Китае до прибыльных продаж на Uzum Market.",
+      bottom_btn: "Получить бесплатную консультацию",
+      foot_text: "Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market",
+      foot_rights: "Все права защищены.",
+      sum: " сум", liter: " л", days: " дней", rateToggleTpl: "Курс: 1$ = {usd} сум · 1$ = {cny} ¥ · изменить",
+      rateToggleTplClose: "Курс: 1$ = {usd} сум · 1$ = {cny} ¥ · скрыть"
+    },
+    uz: {
+      nav_back_text: "Bosh sahifaga",
+      nav_cta: "Bepul konsultatsiya",
+      head_eyebrow: "Kalkulyator",
+      head_title: "Uzum Marketda qancha ishlab topasiz",
+      head_sub: "Mahsulot parametrlarini kiriting — komissiya, logistika va ombordagi saqlashni hisobga olgan holda sof foyda, marjinallik va ROI ko'rasiz.",
+      c1_title: "Mahsulot gabaritlari",
+      c1_sub: "Hajmni hisoblash uchun kerak — undan logistika yig'imi va saqlash narxi bog'liq",
+      c1_l: "Uzunligi, mm", c1_w: "Eni, mm", c1_h: "Balandligi, mm",
+      c1_out: "Mahsulot hajmi",
+      c1_note: "Uzum formulasi: uzunlik × eni × balandlik / 1 000 000",
+      c2_title: "Uzum omborida saqlash va logistika",
+      c2_sub: "Qabul qilish uchun bir martalik yig'im + 60 kundan ortiq saqlansa to'lov",
+      c2_days: "Sotilguncha kutilayotgan muddat, kun",
+      c2_out1: "Logistika yig'imi (bir martalik)",
+      c2_out2: "Butun muddat uchun saqlash",
+      c2_toggle: "Tarif jadvalini ko'rsatish",
+      c2_toggle_close: "Tarif jadvalini yashirish",
+      c2_tg1: "Saqlash (litriga kuniga)",
+      c2_t1: "0–60 kun", c2_t1v: "bepul",
+      c2_t2: "61–180 kun", c2_t2v: "12 so'm",
+      c2_t3: "181–360 kun", c2_t3v: "18 so'm",
+      c2_t4: "361+ kun", c2_t4v: "24 so'm",
+      c2_t5: "Maksimal", c2_t5v: "5 000 so'm/mahsulot kuniga",
+      c2_tg2: "Logistika yig'imi (2026-yil 1-iyundan)",
+      c2_t6: "1 litrgacha", c2_t6v: "5 250 so'm",
+      c2_t7: "Har bir qo'shimcha litr uchun", c2_t7v: "250 so'm",
+      c2_t8: "Maksimal", c2_t8v: "50 000 so'm",
+      tier_free: "Bepul saqlash (0–60 kun)",
+      tier_2: "12 so'm/l kuniga tarif (61–180 kun)",
+      tier_3: "18 so'm/l kuniga tarif (181–360 kun)",
+      tier_4: "24 so'm/l kuniga tarif (361+ kun)",
+      c3_title: "Xitoydan xarid va yetkazib berish",
+      c3_sub: "Mahsulot Uzum omboriga yetib kelgunga qadar tannarx",
+      c3_price: "Mahsulot narxi, ¥", c3_weight: "1 dona vazni, kg", c3_cargo: "Kargo tarifi, $/kg",
+      c3_rateUsd: "$ kursi (so'm)", c3_rateCny: "1 $ uchun ¥",
+      c3_out: "Xitoydagi tannarx",
+      c4_title: "Sotuv narxi va Uzum komissiyasi",
+      c4_sub: "Marketpleysdagi rejalashtirilgan chakana narxga asoslangan",
+      c4_price: "Sotuv narxi, so'm", c4_comm: "Uzum komissiyasi, %", c4_fulfill: "Fulfilment va qadoqlash, so'm/dona",
+      res_label: "1 dona uchun sof foyda",
+      res_margin: "Marjinallik",
+      res_margin_info: "Marjinallik narxning qancha qismi sof foyda sifatida sizda qolishini ko'rsatadi. Ko'rsatkich qancha yuqori bo'lsa, biznes chegirma va aksiyalarga shuncha chidamli.",
+      res_roi_info: "ROI sof foydani Xitoydan xarid va yetkazib berishga sarflangan pul bilan solishtiradi. Har bir sarflangan so'm qancha foyda keltirishini ko'rsatadi.",
+      res_bd_title: "Nimalardan tashkil topadi",
+      res_bd_sale: "Sotuv narxi", res_bd_comm: "Uzum komissiyasi", res_bd_log: "Logistika yig'imi",
+      res_bd_storage: "Saqlash", res_bd_fulfill: "Fulfilment va qadoqlash", res_bd_china: "Xitoydagi tannarx",
+      res_bd_net: "Sof foyda",
+      res_disclaimer: "Hisob taxminiy xarakterga ega. Aniq tariflar va komissiyalarni Uzum Market shaxsiy kabinetingizda tekshiring.",
+      res_cta: "Ishga tushirishga ariza qoldirish",
+      bottom_title: "Qo'lda hisoblashni xohlamaysizmi?",
+      bottom_sub: "Xitoydan xariddan tortib Uzum Marketdagi foydali sotuvgacha butun jarayonni o'z zimmamizga olamiz.",
+      bottom_btn: "Bepul konsultatsiya olish",
+      foot_text: "Toshkent, Oʻzbekiston &nbsp;·&nbsp; Uzum Market sellerlari uchun kompleks xizmat",
+      foot_rights: "Barcha huquqlar himoyalangan.",
+      sum: " so'm", liter: " l", days: " kun", rateToggleTpl: "Kurs: 1$ = {usd} so'm · 1$ = {cny} ¥ · o'zgartirish",
+      rateToggleTplClose: "Kurs: 1$ = {usd} so'm · 1$ = {cny} ¥ · yashirish"
+    }
+  };
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+  function fmtPct(n) {
+    return n.toFixed(2).replace('.', ',') + '%';
+  }
+  function fmtVol(n) {
+    return n.toFixed(2).replace('.', ',');
+  }
+
+  function calcVolumeLiters(L, W, H) {
+    return (L * W * H) / 1000000;
+  }
+
+  function calcLogisticsFee(volumeLiters) {
+    if (volumeLiters <= 1) return 5250;
+    const extra = volumeLiters - 1;
+    return Math.min(5250 + extra * 250, 50000);
+  }
+
+  function calcStorageFee(days, volumeLiters) {
+    const tier2days = Math.min(Math.max(days - 60, 0), 120);
+    const tier3days = Math.min(Math.max(days - 180, 0), 180);
+    const tier4days = Math.max(days - 360, 0);
+    const dailyCap = 5000;
+    const dailyCost2 = Math.min(12 * volumeLiters, dailyCap);
+    const dailyCost3 = Math.min(18 * volumeLiters, dailyCap);
+    const dailyCost4 = Math.min(24 * volumeLiters, dailyCap);
+    return tier2days * dailyCost2 + tier3days * dailyCost3 + tier4days * dailyCost4;
+  }
+
+  function getTier(days) {
+    if (days <= 60) return 'free';
+    if (days <= 180) return '2';
+    if (days <= 360) return '3';
+    return '4';
+  }
+
+  function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function recalc() {
+    const data = langData[currentLang];
+    const L = v('dimL'), W = v('dimW'), H = v('dimH');
+    const volume = calcVolumeLiters(L, W, H);
+    document.getElementById('volumeOut').textContent = fmtVol(volume) + data.liter;
+
+    const days = v('storageDays');
+    document.getElementById('storageDaysVal').textContent = Math.round(days) + data.days;
+    const tier = getTier(days);
+    const badge = document.getElementById('tierBadge');
+    badge.textContent = data['tier_' + tier];
+    badge.classList.toggle('free', tier === 'free');
+
+    const logisticsFee = calcLogisticsFee(volume);
+    const storageFee = calcStorageFee(days, volume);
+    document.getElementById('logisticsFeeOut').textContent = fmt(logisticsFee) + data.sum;
+    document.getElementById('storageFeeOut').textContent = fmt(storageFee) + data.sum;
+
+    const cnPrice = v('cnPrice'), cnWeight = v('cnWeight'), cnCargo = v('cnCargo');
+    const rateUsd = v('rateUsd'), rateCny = v('rateCny');
+    const priceUsd = rateCny > 0 ? cnPrice / rateCny : 0;
+    const cargoUsd = cnWeight * cnCargo;
+    const chinaCost = Math.round((priceUsd + cargoUsd) * rateUsd);
+    document.getElementById('chinaCostOut').textContent = fmt(chinaCost) + data.sum;
+
+    const rateBtnText = document.getElementById('rateToggleBtn').classList.contains('open') ? data.rateToggleTplClose : data.rateToggleTpl;
+    document.querySelector('#rateToggleBtn span').textContent = rateBtnText
+      .replace('{usd}', fmt(rateUsd)).replace('{cny}', fmtVol(rateCny));
+
+    const salePrice = v('salePrice'), commissionPct = v('commissionPct'), fulfillCost = v('fulfillCost');
+    const commissionSum = salePrice * (commissionPct / 100);
+    const netProfit = salePrice - commissionSum - logisticsFee - storageFee - fulfillCost - chinaCost;
+    const margin = salePrice > 0 ? (netProfit / salePrice) * 100 : 0;
+    const roi = chinaCost > 0 ? (netProfit / chinaCost) * 100 : 0;
+
+    document.getElementById('netProfitOut').textContent = fmt(netProfit) + data.sum;
+    document.getElementById('marginOut').textContent = fmtPct(margin);
+    document.getElementById('roiOut').textContent = fmtPct(roi);
+
+    document.getElementById('bdSale').textContent = fmt(salePrice) + data.sum;
+    document.getElementById('bdCommission').textContent = '−' + fmt(commissionSum) + data.sum;
+    document.getElementById('bdLogistics').textContent = '−' + fmt(logisticsFee) + data.sum;
+    document.getElementById('bdStorage').textContent = '−' + fmt(storageFee) + data.sum;
+    document.getElementById('bdFulfill').textContent = '−' + fmt(fulfillCost) + data.sum;
+    document.getElementById('bdChina').textContent = '−' + fmt(chinaCost) + data.sum;
+    document.getElementById('bdNet').textContent = fmt(netProfit) + data.sum;
+  }
+
+  function toggleCollapse(panelId, btnId) {
+    const panel = document.getElementById(panelId);
+    const btn = document.getElementById(btnId);
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    if (panelId === 'tariffPanel') {
+      btn.querySelector('span').textContent = isOpen ? langData[currentLang].c2_toggle_close : langData[currentLang].c2_toggle;
+    }
+    if (panelId === 'ratePanel') {
+      recalc();
+    }
+  }
+
+  function toggleMetricInfo(id) {
+    const el = document.getElementById(id);
+    const wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.calc2-metric-info.open').forEach(p => p.classList.remove('open'));
+    if (!wasOpen) el.classList.add('open');
+  }
+
+  function setLang(lang) {
+    currentLang = lang;
+    const data = langData[lang];
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (data[key] !== undefined) el.innerHTML = data[key];
+    });
+    document.documentElement.lang = lang;
+    recalc();
+  }
+
+  function toggleLangDrop() {
+    document.getElementById('langDropWrap').classList.toggle('open');
+  }
+  function pickLang(lang) {
+    document.getElementById('langDropLabel').textContent = lang.toUpperCase();
+    document.querySelectorAll('#langDropList .custom-select-option').forEach(opt => {
+      opt.classList.toggle('active', opt.getAttribute('data-value') === lang);
+    });
+    document.getElementById('langDropWrap').classList.remove('open');
+    setLang(lang);
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#langDropWrap')) {
+      document.getElementById('langDropWrap').classList.remove('open');
+    }
+  });
+
+  ['dimL','dimW','dimH','storageDays','cnPrice','cnWeight','cnCargo','rateUsd','rateCny','salePrice','commissionPct','fulfillCost']
+    .forEach(id => document.getElementById(id).addEventListener('input', recalc));
+
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+    const bar = document.getElementById('scrollProgress');
+    if (bar) {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+      bar.style.width = (scrolled * 100) + '%';
+    }
+  }, { passive: true });
+
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.calc2-card, .calc2-result').forEach(el => cardObserver.observe(el));
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersReduced && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.calc2-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+  }
+
+  recalc();
+</script>
+</body>
+</html>
