@@ -652,12 +652,17 @@
   }
   .radio-label.active { border-color: var(--border-bright); background: var(--orange-dim); color: var(--orange-light); }
   .radio-label input[type="radio"] { display: none; }
+  .radio-icon { flex-shrink: 0; }
   .form-submit {
     width: 100%; max-width: 420px; margin: 32px auto 0; background: var(--orange); color: #fff; border: none;
     border-radius: var(--r-md); padding: 18px 32px; font-size: 17px; font-weight: 700; cursor: pointer;
     font-family: 'Inter', sans-serif; transition: background 0.3s ease, transform 0.3s var(--ease-out), box-shadow 0.3s ease;
-    display: block; position: relative; overflow: hidden; z-index: 1; box-shadow: 0 10px 30px rgba(255,92,0,0.32);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    position: relative; overflow: hidden; z-index: 1; box-shadow: 0 10px 30px rgba(255,92,0,0.32);
   }
+  .submit-icon { flex-shrink: 0; }
+  .btn-spinner { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .form-submit::before {
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
@@ -725,14 +730,15 @@
     backdrop-filter: blur(1px);
   }
   /* Когда картинка не задана — показываем placeholder-подсказку */
-  .hero-bg-image.empty::before {
-    content: '🖼 Нажмите, чтобы задать фоновое изображение';
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: rgba(255,255,255,0.15);
+  .hero-bg-image-hint {
+    position: absolute; inset: 0; display: none;
+    align-items: center; justify-content: center; gap: 8px;
+    font-size: 14px; color: rgba(255,255,255,0.18);
     border: 2px dashed rgba(255,255,255,0.08);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
   }
+  .hero-bg-image-hint svg { width: 20px; height: 20px; stroke: rgba(255,255,255,0.25); fill: none; stroke-width: 1.5; flex-shrink: 0; }
+  .hero-bg-image.empty .hero-bg-image-hint { display: flex; }
   /* Все дочерние элементы hero поверх картинки.
      .scroll-hint исключён: ему нужен именно position:absolute (left:50%+translateX(-50%) для
      центрирования). Эта блочная правило имела более высокую специфичность и перетирало
@@ -911,14 +917,22 @@
 <section class="hero" id="hero">
   <!-- Фоновая картинка: задайте URL в CSS-переменной --hero-bg-image внутри .hero -->
   <!-- Или прямо здесь через атрибут style: style="background-image:url('...')" -->
-  <div class="hero-bg-image empty" id="heroBgImage"></div>
+  <div class="hero-bg-image empty" id="heroBgImage">
+    <div class="hero-bg-image-hint">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Нажмите, чтобы задать фоновое изображение</span>
+    </div>
+  </div>
   <div class="hero-bg"></div>
   <div class="hero-gr"></div>
   <div class="hero-badge" data-key="hero_badge">Комплексный сервис для селлеров в Узбекистане</div>
   <h1 data-key="hero_h1">Запустим ваш прибыльный бизнес на <span>Uzum Market</span> под ключ</h1>
   <p class="hero-sub" data-key="hero_sub">От аналитики ниши и обучения закупу до профессиональной инфографики, маркировки на нашем складе в Ташкенте и вывода карточек в ТОП.</p>
   <div class="hero-btns">
-    <a href="#form" class="btn-primary" data-key="hero_btn_primary">🚀 Получить бесплатную консультацию</a>
+    <a href="#form" class="btn-primary">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 2.2 5 6.2 5 10 0 1.6-.3 3.1-1 4.2l-4 3.8-4-3.8c-.7-1.1-1-2.6-1-4.2 0-3.8 2-7.8 5-10z"/><circle cx="12" cy="9.2" r="1.8"/><path d="M9 16.5L6.2 21M15 16.5l2.8 4.5"/></svg>
+      <span data-key="hero_btn_primary">Получить бесплатную консультацию</span>
+    </a>
     <a href="#packages" class="btn-secondary" data-key="hero_btn_secondary">Посмотреть пакеты</a>
   </div>
   <div class="hero-stats">
@@ -1316,11 +1330,13 @@
         <div class="radio-group">
           <label class="radio-label active" id="rl-call">
             <input type="radio" name="contact" value="call" checked>
-            <span data-key="radio_call">📞 Позвонить</span>
+            <svg class="radio-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span data-key="radio_call">Позвонить</span>
           </label>
           <label class="radio-label" id="rl-tg">
             <input type="radio" name="contact" value="tg">
-            <span data-key="radio_tg">✈️ Написать в Telegram</span>
+            <svg class="radio-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            <span data-key="radio_tg">Написать в Telegram</span>
           </label>
         </div>
       </div>
@@ -1363,8 +1379,9 @@
       </div>
     </div>
     <input type="hidden" id="calcData" value="Не использовался">
-    <button class="form-submit" id="submitBtn" onclick="handleSubmit()" data-key="f_submit">
-      🔥 Получить бесплатную консультацию
+    <button class="form-submit" id="submitBtn" onclick="handleSubmit()">
+      <svg class="submit-icon" id="submitBtnIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      <span id="submitBtnText">Получить бесплатную консультацию</span>
     </button>
     <p class="form-note" data-key="f_note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам.</p>
   </div>
@@ -1389,7 +1406,7 @@
       hero_badge: "Комплексный сервис для селлеров в Узбекистане",
       hero_h1: "Запустим ваш прибыльный бизнес на <span>Uzum Market</span> под ключ",
       hero_sub: "От аналитики ниши и обучения закупу до профессиональной инфографики, маркировки на нашем складе в Ташкенте и вывода карточек в ТОП.",
-      hero_btn_primary: "🚀 Получить бесплатную консультацию",
+      hero_btn_primary: "Получить бесплатную консультацию",
       hero_btn_secondary: "Посмотреть пакеты",
       stat_1: "новичков теряют деньги<br>без правильного старта",
       stat_2_unit: "мин",
@@ -1507,14 +1524,14 @@
       label_name: "Ваше имя",
       label_phone: "Номер телефона",
       label_contact: "Удобный способ связи",
-      radio_call: "📞 Позвонить",
-      radio_tg: "✈️ Написать в Telegram",
+      radio_call: "Позвонить",
+      radio_tg: "Написать в Telegram",
       label_budget: "Бюджет на закупку товара",
       opt_b0: "Выберите диапазон",
       opt_b1: "До $1 000",
       opt_b2: "$1 000 — $3 000",
       opt_b3: "Более $3 000",
-      f_submit: "🔥 Получить бесплатную консультацию",
+      f_submit: "Получить бесплатную консультацию",
       f_note: "Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Не передаём данные третьим лицам.",
       foot_text: "Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market",
       foot_rights: "Все права защищены."
@@ -1525,7 +1542,7 @@
       hero_badge: "Oʻzbekistondagi sellerlar uchun kompleks xizmat",
       hero_h1: "Uzum Marketda oʻz daromadli biznesingizni <span>pod klyuch</span> ishga tushiring",
       hero_sub: "Nisha tahlili va xaridni oʻrgatishdan tortib professional infografika, Toshkentdagi omborimizda qadoqlash hamda kartochkalarni TOPga olib chiqishgacha.",
-      hero_btn_primary: "🚀 Bepul konsultatsiya olish",
+      hero_btn_primary: "Bepul konsultatsiya olish",
       hero_btn_secondary: "Paketlarni koʻrish",
       stat_1: "yangi boshlaganlar toʻgʻri startsiz<br>mablagʻlarini yoʻqotishadi",
       stat_2_unit: "daqiqa",
@@ -1643,14 +1660,14 @@
       label_name: "Sizning ismingiz",
       label_phone: "Telefon raqamingiz",
       label_contact: "Bogʻlanish uchun qulay usul",
-      radio_call: "📞 Qoʻngʻiroq qilish",
-      radio_tg: "✈️ Telegramda yozish",
+      radio_call: "Qoʻngʻiroq qilish",
+      radio_tg: "Telegramda yozish",
       label_budget: "Mahsulot sotib olish byudjeti",
       opt_b0: "Oraliqni tanlang",
       opt_b1: "$1 000 gacha",
       opt_b2: "$1 000 — $3 000",
       opt_b3: "$3 000 dan koʻp",
-      f_submit: "🔥 Bepul konsultatsiya olish",
+      f_submit: "Bepul konsultatsiya olish",
       f_note: "Tugmani bosish orqali siz shaxsiy maʼlumotlarni qayta ishlashga rozilik bildirasiz. Maʼlumotlarni uchinchi shaxslarga bermaymiz.",
       foot_text: "Toshkent, Oʻzbekiston &nbsp;·&nbsp; Uzum Market sellerlari uchun kompleks xizmat",
       foot_rights: "Barcha huquqlar himoyalangan."
@@ -1747,21 +1764,33 @@
     }
   }
 
+  const SUBMIT_ICONS = {
+    send: '<svg class="submit-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>',
+    spinner: '<svg class="submit-icon btn-spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-opacity="0.3"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>',
+    check: '<svg class="submit-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>',
+    alert: '<svg class="submit-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>'
+  };
+  function setSubmitBtnContent(iconKey, text) {
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = (SUBMIT_ICONS[iconKey] || '') + '<span id="submitBtnText">' + text + '</span>';
+  }
+
   function updateSubmitBtnText() {
     const currentLang = document.getElementById('langSelect').value;
     const data = langData[currentLang] || langData.ru;
-    const btn = document.getElementById('submitBtn');
     if (pendingAction.type === 'service') {
       const name = data[pendingAction.key + '_name'];
-      btn.innerText = currentLang === 'uz'
-        ? `🔥 "${name}" xizmatini buyurtma berish`
-        : `🔥 Заказать услугу: ${name}`;
+      const text = currentLang === 'uz'
+        ? `"${name}" xizmatini buyurtma berish`
+        : `Заказать услугу: ${name}`;
+      setSubmitBtnContent('send', text);
     } else if (pendingAction.type === 'calc') {
-      btn.innerText = currentLang === 'uz'
-        ? "🔥 Hisob boʻyicha arizani yuborish"
-        : "🔥 Отправить заявку по расчету";
+      const text = currentLang === 'uz'
+        ? "Hisob boʻyicha arizani yuborish"
+        : "Отправить заявку по расчету";
+      setSubmitBtnContent('send', text);
     } else {
-      btn.innerText = data.f_submit;
+      setSubmitBtnContent('send', data.f_submit);
     }
   }
 
@@ -1902,7 +1931,7 @@
       return;
     }
 
-    // ⚠️ ВНИМАНИЕ — КРИТИЧНО ДЛЯ БЕЗОПАСНОСТИ:
+    // ВНИМАНИЕ — КРИТИЧНО ДЛЯ БЕЗОПАСНОСТИ:
     // Токен бота и chat_id видны любому в исходном коде страницы (вкладка "Просмотр кода" в браузере).
     // Это позволяет третьим лицам украсть токен и слать сообщения от имени бота кому угодно,
     // читать обновления бота и т.д. Для продакшена замените прямой вызов Telegram API
@@ -1912,7 +1941,7 @@
 
     const message = `<b>🚨 НОВАЯ ЗАЯВКА С ЛЕНДИНГА!</b>\n\n<b>👤 Имя:</b> ${name}\n<b>📞 Телефон:</b> ${phone}\n<b>💬 Способ связи:</b> ${contactMethod === 'tg' ? 'Telegram ✈️' : 'Звонок 📞'}\n<b>💰 Бюджет:</b> ${budget ? '$' + budget : 'Не указан'}\n<b>🧮 Детали:</b> ${calculatorDetails}`;
 
-    btn.textContent = currentLang === 'uz' ? '⏳ Yuborilmoqda...' : '⏳ Отправка...';
+    setSubmitBtnContent('spinner', currentLang === 'uz' ? 'Yuborilmoqda...' : 'Отправка...');
     btn.disabled = true;
 
     fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
@@ -1922,19 +1951,20 @@
     })
     .then(response => {
       if (response.ok) {
-        btn.textContent = currentLang === 'uz'
-          ? '✅ Arizangiz yuborildi! 15 daqiqada bogʻlanamiz.'
-          : '✅ Заявка отправлена! Свяжемся за 15 минут.';
+        setSubmitBtnContent('check', currentLang === 'uz'
+          ? 'Arizangiz yuborildi! 15 daqiqada bogʻlanamiz.'
+          : 'Заявка отправлена! Свяжемся за 15 минут.');
         btn.style.background = '#10b981';
       } else { throw new Error(); }
     })
     .catch(() => {
-      btn.textContent = currentLang === 'uz' ? '❌ Xatolik. Qaytadan urinib koʻring' : '❌ Ошибка. Попробуйте еще раз';
+      setSubmitBtnContent('alert', currentLang === 'uz' ? 'Xatolik. Qaytadan urinib koʻring' : 'Ошибка. Попробуйте еще раз');
       btn.disabled = false;
     });
   }
 
   calculateTotal();
+  updateSubmitBtnText();
 
   /* ===== КАСТОМНЫЕ ВЫПАДАЮЩИЕ МЕНЮ ===== */
 
