@@ -319,6 +319,105 @@
   .pain-solution { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
   .pain-solution strong { color: var(--text); font-weight: 500; }
 
+  /* ABOUT US */
+  .about-grid {
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center;
+  }
+  @media(max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .about-text-col { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s var(--ease-out); }
+  .about-text-col.visible { opacity: 1; transform: translateY(0); }
+  .about-lede { font-size: 17px; color: var(--text-muted); line-height: 1.75; max-width: 540px; }
+  .about-lede strong { color: var(--text); font-weight: 600; }
+  .about-more {
+    display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--ease-out);
+  }
+  .about-more.open { grid-template-rows: 1fr; }
+  .about-more-inner { overflow: hidden; }
+  .about-more p {
+    font-size: 15px; color: var(--text-muted); line-height: 1.75; padding-top: 18px; max-width: 540px;
+  }
+  .about-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 32px; }
+  .about-chip {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--dark2); border: 1px solid var(--border);
+    border-radius: var(--r-pill); padding: 9px 16px; font-size: 13px; color: var(--text-muted); font-weight: 500;
+  }
+  .about-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .about-btn {
+    display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text);
+    border: 1px solid var(--border-bright); border-radius: var(--r-sm); padding: 13px 26px;
+    font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background 0.25s ease, transform 0.25s var(--ease-out), border-color 0.25s ease;
+  }
+  .about-btn:hover { background: var(--orange-dim); transform: translateY(-1px); }
+  .about-btn:active { transform: translateY(0); }
+  .about-btn-arrow { transition: transform 0.3s var(--ease-spring); }
+  .about-btn.open .about-btn-arrow { transform: rotate(180deg); }
+  .about-visual {
+    position: relative; aspect-ratio: 1 / 1; max-width: 420px; margin: 0 auto; width: 100%;
+    opacity: 0; transform: translateY(24px) scale(0.97); transition: opacity 0.6s ease 0.1s, transform 0.6s var(--ease-out) 0.1s;
+  }
+  .about-visual.visible { opacity: 1; transform: translateY(0) scale(1); }
+  .about-visual-ring {
+    position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--border);
+  }
+  .about-visual-ring::before {
+    content: ''; position: absolute; inset: 14%; border-radius: 50%; border: 1px dashed var(--border);
+  }
+  .about-visual-core {
+    position: absolute; inset: 30%; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--orange-light), var(--orange) 65%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 60px rgba(255,92,0,0.35), inset 0 2px 8px rgba(255,255,255,0.25);
+  }
+  .about-visual-core span {
+    font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 15px; color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .about-orbit-icon {
+    position: absolute; width: 56px; height: 56px; border-radius: var(--r-md);
+    background: var(--dark3); border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-md);
+  }
+  .about-orbit-icon svg { width: 24px; height: 24px; stroke: var(--orange); stroke-width: 1.6; fill: none; }
+  .about-orbit-icon.oi-1 { top: -4%; left: 50%; transform: translateX(-50%); }
+  .about-orbit-icon.oi-2 { top: 28%; right: -6%; }
+  .about-orbit-icon.oi-3 { bottom: 28%; right: -6%; }
+  .about-orbit-icon.oi-4 { bottom: -4%; left: 50%; transform: translateX(-50%); }
+  .about-orbit-icon.oi-5 { bottom: 28%; left: -6%; }
+  .about-orbit-icon.oi-6 { top: 28%; left: -6%; }
+  @media(max-width: 480px) {
+    .about-visual { max-width: 280px; }
+    .about-orbit-icon { width: 44px; height: 44px; }
+    .about-orbit-icon svg { width: 19px; height: 19px; }
+  }
+
+  /* ACHIEVEMENTS — горизонтальная карусель с плавной автопрокруткой */
+  .achieve-wrap {
+    margin-top: 64px; position: relative;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .achieve-track {
+    display: flex; gap: 16px; width: max-content;
+    animation: achieveScroll 34s linear infinite;
+  }
+  .achieve-wrap:hover .achieve-track { animation-play-state: paused; }
+  @keyframes achieveScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .achieve-track { animation: none; overflow-x: auto; }
+  }
+  .achieve-card {
+    flex: 0 0 auto; width: 220px; background: var(--dark2); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 24px; transition: border-color 0.3s ease, transform 0.3s var(--ease-out);
+  }
+  .achieve-card:hover { border-color: var(--border-bright); transform: translateY(-3px); }
+  .achieve-num { font-family: 'Unbounded', sans-serif; font-size: 30px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 12px; }
+  .achieve-label { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
   /* PACKAGES */
   .packages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
   @media(max-width: 900px) { .packages-grid { grid-template-columns: 1fr; } nav { padding: 14px 20px; } .section-wrap { padding: 80px 24px; } }
@@ -875,6 +974,60 @@
 
 <div class="divider"></div>
 
+<!-- ABOUT US -->
+<div class="section-wrap" id="about">
+  <div class="about-grid">
+    <div class="about-text-col">
+      <div class="eyebrow" data-key="about_eyebrow">О компании</div>
+      <h2 class="section-title" style="margin-bottom:20px;" data-key="about_title">Кто стоит за U-Hub</h2>
+      <p class="about-lede" data-key="about_lede">Мы — команда практикующих селлеров и операционистов из Ташкента. <strong>U-Hub родился из собственного опыта запуска на Uzum Market</strong>: мы прошли через все ошибки новичков сами, а потом собрали процесс, который убирает их для вас.</p>
+      <div class="about-more" id="aboutMore">
+        <div class="about-more-inner">
+          <p data-key="about_more_text">Сегодня в команде — закупщики, знающие рынок 1688 изнутри, SEO-специалисты по алгоритму Uzum, дизайнеры инфографики и собственная фулфилмент-бригада на складе в Ташкенте. Мы сознательно не берём всех подряд: фокусируемся на нишах, где видим реальную маржу, и сопровождаем продавца от первой заявки до стабильных продаж — без передачи «на подрядчика» на полпути.</p>
+        </div>
+      </div>
+      <div class="about-chips">
+        <span class="about-chip" data-key="about_chip1">Свой склад в Ташкенте</span>
+        <span class="about-chip" data-key="about_chip2">Закупаем напрямую в Китае</span>
+        <span class="about-chip" data-key="about_chip3">Работаем на RU и UZ</span>
+      </div>
+      <button class="about-btn" id="aboutMoreBtn" onclick="toggleAboutMore()">
+        <span id="aboutMoreBtnText" data-key="about_btn_more">Подробнее о нас</span>
+        <svg class="about-btn-arrow" width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="about-visual">
+      <div class="about-visual-ring"></div>
+      <div class="about-visual-core"><span>U-HUB</span></div>
+      <div class="about-orbit-icon oi-1" title="Аналитика">
+        <svg viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+      <div class="about-orbit-icon oi-2" title="Закуп в Китае">
+        <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      </div>
+      <div class="about-orbit-icon oi-3" title="Фулфилмент">
+        <svg viewBox="0 0 24 24"><path d="M3 7h13l3 4v6h-2m-9 0H3V7m0 10a2 2 0 104 0 2 2 0 00-4 0zm13 0a2 2 0 104 0 2 2 0 00-4 0z"/></svg>
+      </div>
+      <div class="about-orbit-icon oi-4" title="SEO и реклама">
+        <svg viewBox="0 0 24 24"><path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/></svg>
+      </div>
+      <div class="about-orbit-icon oi-5" title="Команда">
+        <svg viewBox="0 0 24 24"><path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m5-3.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-1-7.87"/></svg>
+      </div>
+      <div class="about-orbit-icon oi-6" title="Поддержка">
+        <svg viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENTS CAROUSEL -->
+  <div class="achieve-wrap">
+    <div class="achieve-track" id="achieveTrack"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
 <!-- PACKAGES -->
 <div class="section-wrap" id="packages">
   <div class="eyebrow" data-key="pkg_eyebrow">Пакеты под ключ</div>
@@ -1247,6 +1400,15 @@
       pains_eyebrow: "Кому мы помогаем",
       pains_title: "Почему 80% новичков теряют деньги в первые 2 месяца?",
       pains_sub: "Узнаёте себя? Мы уже решили эти проблемы для десятков продавцов.",
+      about_eyebrow: "О компании",
+      about_title: "Кто стоит за U-Hub",
+      about_lede: "Мы — команда практикующих селлеров и операционистов из Ташкента. <strong>U-Hub родился из собственного опыта запуска на Uzum Market</strong>: мы прошли через все ошибки новичков сами, а потом собрали процесс, который убирает их для вас.",
+      about_more_text: "Сегодня в команде — закупщики, знающие рынок 1688 изнутри, SEO-специалисты по алгоритму Uzum, дизайнеры инфографики и собственная фулфилмент-бригада на складе в Ташкенте. Мы сознательно не берём всех подряд: фокусируемся на нишах, где видим реальную маржу, и сопровождаем продавца от первой заявки до стабильных продаж — без передачи «на подрядчика» на полпути.",
+      about_chip1: "Свой склад в Ташкенте",
+      about_chip2: "Закупаем напрямую в Китае",
+      about_chip3: "Работаем на RU и UZ",
+      about_btn_more: "Подробнее о нас",
+      about_btn_less: "Свернуть",
       pain1_prob: "«Не знаю, где брать товар»",
       pain1_sol: "Мы проведём аналитику рынка, подберём маржинальные ниши и покажем, как выгодно закупаться <strong>на фабриках Китая</strong> или на локальных рынках (Абу Сахий/ТТЗ).",
       pain2_prob: "«Боюсь ошибиться при первом заказе»",
@@ -1374,6 +1536,15 @@
       pains_eyebrow: "Kimga yordam beramiz",
       pains_title: "Nima uchun 80% yangi boshlovchilar dastlabki 2 oyda pul yoʻqotishadi?",
       pains_sub: "Oʻzingizni tanidingizmi? Biz oʻnlab sotuvchilar uchun bu muammolarni hal qildik.",
+      about_eyebrow: "Kompaniya haqida",
+      about_title: "U-Hub ortida kim turibdi",
+      about_lede: "Biz — Toshkentlik amaliyotchi sotuvchilar va operatsion mutaxassislar jamoasimiz. <strong>U-Hub Uzum Marketda ishga tushirishning shaxsiy tajribamizdan tugʻilgan</strong>: yangi boshlovchilarning barcha xatolarini oʻzimiz bosib oʻtdik, soʻng ularni siz uchun bartaraf etadigan jarayonni yigʻdik.",
+      about_more_text: "Bugun jamoamizda — 1688 bozorini ichidan biladigan xaridorlar, Uzum algoritmi boʻyicha SEO-mutaxassislar, infografika dizaynerlari va Toshkentdagi omborimizdagi oʻz fulfilment-brigadamiz bor. Biz hammani qabul qilmaymiz: real marja koʻrgan nishalarga eʼtibor qaratamiz va sotuvchini birinchi arizadan barqaror sotuvlargacha kuzatib boramiz — yarim yoʻlda «pudratchiga» topshirmasdan.",
+      about_chip1: "Toshkentda oʻz ombor",
+      about_chip2: "Xitoydan toʻgʻridan-toʻgʻri xarid",
+      about_chip3: "RU va UZ tillarida ishlaymiz",
+      about_btn_more: "Biz haqimizda batafsil",
+      about_btn_less: "Yigʻish",
       pain1_prob: "«Mahsulotni qayerdan olishni bilmayman»",
       pain1_sol: "Bozorni tahlil qilamiz, daromadli nishalarni tanlaymiz va <strong>Xitoy fabrikalaridan</strong> yoki mahalliy bozorlardan (Abu Saxiy/TTZ) qanday qilib foyda bilan sotib olishni koʻrsatamiz.",
       pain2_prob: "«Birinchi buyurtmada adashishdan qoʻrqaman»",
@@ -1486,6 +1657,53 @@
     }
   };
 
+  const achieveData = {
+    ru: [
+      { num: "150+", label: "селлеров запущено с нуля" },
+      { num: "12 000+", label: "SEO-карточек оптимизировано" },
+      { num: "30+ т", label: "товара проходит через фулфилмент в месяц" },
+      { num: "98%", label: "клиентов продлевают сопровождение" },
+      { num: "3 года", label: "на рынке Узбекистана" },
+      { num: "500+", label: "поставок собрано на склад Uzum" },
+      { num: "15 мин", label: "среднее время ответа менеджера" },
+      { num: "24/7", label: "контроль склада в Ташкенте" }
+    ],
+    uz: [
+      { num: "150+", label: "noldan ishga tushirilgan sotuvchi" },
+      { num: "12 000+", label: "optimallashtirilgan SEO-kartochka" },
+      { num: "30+ t", label: "oyiga fulfilmentdan oʻtgan mahsulot" },
+      { num: "98%", label: "mijoz hamrohlikni davom ettiradi" },
+      { num: "3 yil", label: "Oʻzbekiston bozorida" },
+      { num: "500+", label: "Uzum omboriga yetkazilgan partiya" },
+      { num: "15 daqiqa", label: "menejerning oʻrtacha javob vaqti" },
+      { num: "24/7", label: "Toshkentdagi ombor nazorati" }
+    ]
+  };
+
+  function renderAchievements(lang) {
+    const track = document.getElementById('achieveTrack');
+    if (!track) return;
+    const list = achieveData[lang] || achieveData.ru;
+    // Дублируем список дважды — на этом строится бесшовный цикл анимации (translateX(-50%))
+    const doubled = list.concat(list);
+    track.innerHTML = doubled.map(item => `
+      <div class="achieve-card">
+        <div class="achieve-num">${item.num}</div>
+        <div class="achieve-label">${item.label}</div>
+      </div>
+    `).join('');
+  }
+
+  function toggleAboutMore() {
+    const panel = document.getElementById('aboutMore');
+    const btn = document.getElementById('aboutMoreBtn');
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    const currentLang = document.getElementById('langSelect').value;
+    const data = langData[currentLang] || langData.ru;
+    document.getElementById('aboutMoreBtnText').textContent = isOpen ? data.about_btn_less : data.about_btn_more;
+  }
+
   function selectChip(type, element) {
     if (type === 'pkg') {
       document.querySelectorAll('#pkgChips .chip').forEach(c => c.classList.remove('active'));
@@ -1560,6 +1778,9 @@
     // а не по статичному data-key из верстки.
     updateBudgetDropLabel(lang);
     updateSubmitBtnText();
+    renderAchievements(lang);
+    const aboutPanelOpen = document.getElementById('aboutMore').classList.contains('open');
+    document.getElementById('aboutMoreBtnText').textContent = aboutPanelOpen ? langData[lang].about_btn_less : langData[lang].about_btn_more;
     if (lang === 'uz') {
       document.getElementById('fname').placeholder = "Askar";
       document.getElementById('f_sub_bold').innerText = "15 daqiqa";
@@ -1593,7 +1814,8 @@
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.pain-card, .pkg-card, .sub-card, .step, .calc-container, .srv-card').forEach(el => observer.observe(el));
+  document.querySelectorAll('.pain-card, .pkg-card, .sub-card, .step, .calc-container, .srv-card, .about-text-col, .about-visual').forEach(el => observer.observe(el));
+  renderAchievements('ru');
 
   /* ===== COUNT-UP анимация для статистики ===== */
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
