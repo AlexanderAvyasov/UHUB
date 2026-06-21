@@ -108,6 +108,14 @@
   }
   .nav-cta:hover { background: var(--orange-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,92,0,0.45); }
 
+  @media(max-width: 640px) {
+    nav { padding: 12px 16px; }
+    .nav-right { gap: 8px; }
+    .nav-back span { display: none; }
+    .nav-back { padding: 8px; background: var(--dark3); border: 1px solid var(--border); border-radius: 8px; }
+    .nav-cta { padding: 8px 14px; font-size: 12.5px; }
+  }
+
   /* CUSTOM LANG DROPDOWN */
   .custom-select-wrap { position: relative; display: inline-flex; align-items: center; }
   .custom-select-btn {
@@ -230,14 +238,31 @@
   .calc2-range-val { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: var(--orange); min-width: 76px; text-align: right; white-space: nowrap; }
 
   /* СВОРАЧИВАЕМЫЕ ПАНЕЛИ (тарифы / курсы валют) */
-  .calc2-toggle-btn {
-    display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; cursor: pointer;
+  .calc2-toggle-btn { display: inline-flex; align-items: center; gap: 6px; background: transparent; border: none; cursor: pointer;
     color: var(--text-muted); font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; padding: 0;
-    margin-top: 16px; position: relative; z-index: 1; transition: color 0.2s ease;
-  }
+    margin-top: 16px; position: relative; z-index: 1; transition: color 0.2s ease; }
   .calc2-toggle-btn:hover { color: var(--orange-light); }
   .calc2-toggle-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; transition: transform 0.3s var(--ease-spring); }
   .calc2-toggle-btn.open svg { transform: rotate(180deg); }
+
+  .calc2-rate-status {
+    display: flex; align-items: center; gap: 9px; margin-top: 18px; padding: 11px 14px;
+    background: var(--dark3); border: 1px solid var(--border); border-radius: var(--r-sm);
+    font-size: 12.5px; color: var(--text-muted); position: relative; z-index: 1; transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .calc2-rate-status.error { border-color: rgba(255,110,80,0.3); color: rgba(255,140,120,0.9); }
+  .calc2-rate-status-icon { width: 15px; height: 15px; stroke: var(--orange); fill: none; stroke-width: 1.6; flex-shrink: 0; }
+  .calc2-rate-status.error .calc2-rate-status-icon { stroke: rgba(255,140,120,0.9); }
+  .calc2-rate-status span { flex: 1; min-width: 0; }
+  .calc2-rate-refresh {
+    background: transparent; border: none; cursor: pointer; color: var(--text-muted); padding: 5px;
+    display: flex; align-items: center; justify-content: center; border-radius: 6px; flex-shrink: 0;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  .calc2-rate-refresh:hover { color: var(--orange-light); background: var(--orange-dim); }
+  .calc2-rate-refresh svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .calc2-rate-refresh.spinning svg { animation: rateSpin 0.8s linear infinite; }
+  @keyframes rateSpin { to { transform: rotate(360deg); } }
   .calc2-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease-out); position: relative; z-index: 1; }
   .calc2-collapse.open { grid-template-rows: 1fr; }
   .calc2-collapse-inner { overflow: hidden; }
@@ -346,7 +371,7 @@
 <nav id="navbar">
   <a href="index.html" class="nav-logo"><span class="logo-dot"></span>U<span>-HUB</span></a>
   <div class="nav-right">
-    <a href="index.html" class="nav-back" data-key="nav_back">
+    <a href="index.html" class="nav-back" aria-label="На главную">
       <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       <span data-key="nav_back_text">На главную</span>
     </a>
@@ -481,8 +506,16 @@
           </div>
         </div>
 
+        <div class="calc2-rate-status" id="rateStatus">
+          <svg class="calc2-rate-status-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 6V4M18 6V4"/></svg>
+          <span id="rateStatusText">Обновляем курс…</span>
+          <button type="button" class="calc2-rate-refresh" id="rateRefreshBtn" onclick="fetchRates()" aria-label="Обновить курс">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          </button>
+        </div>
+
         <button class="calc2-toggle-btn" id="rateToggleBtn" onclick="toggleCollapse('ratePanel','rateToggleBtn')">
-          <span data-key="c3_toggle">Курс: 1$ = 12 800 сум · 1$ = 7,25 ¥ · изменить</span>
+          <span data-key="c3_toggle">Изменить курс вручную</span>
           <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="calc2-collapse" id="ratePanel">
@@ -659,8 +692,12 @@
       bottom_btn: "Получить бесплатную консультацию",
       foot_text: "Ташкент, Узбекистан &nbsp;·&nbsp; Комплексный сервис для селлеров Uzum Market",
       foot_rights: "Все права защищены.",
-      sum: " сум", liter: " л", days: " дней", rateToggleTpl: "Курс: 1$ = {usd} сум · 1$ = {cny} ¥ · изменить",
-      rateToggleTplClose: "Курс: 1$ = {usd} сум · 1$ = {cny} ¥ · скрыть"
+      sum: " сум", liter: " л", days: " дней",
+      c3_toggle: "Изменить курс вручную", c3_toggle_close: "Скрыть",
+      rate_loading: "Обновляем курс…",
+      rate_success_cbu: "Курс ЦБ Узбекистана на {date}",
+      rate_success_market: "Курс обновлён",
+      rate_error: "Не удалось обновить курс — используем сохранённые значения"
     },
     uz: {
       nav_back_text: "Bosh sahifaga",
@@ -717,8 +754,12 @@
       bottom_btn: "Bepul konsultatsiya olish",
       foot_text: "Toshkent, Oʻzbekiston &nbsp;·&nbsp; Uzum Market sellerlari uchun kompleks xizmat",
       foot_rights: "Barcha huquqlar himoyalangan.",
-      sum: " so'm", liter: " l", days: " kun", rateToggleTpl: "Kurs: 1$ = {usd} so'm · 1$ = {cny} ¥ · o'zgartirish",
-      rateToggleTplClose: "Kurs: 1$ = {usd} so'm · 1$ = {cny} ¥ · yashirish"
+      sum: " so'm", liter: " l", days: " kun",
+      c3_toggle: "Kursni qo'lda o'zgartirish", c3_toggle_close: "Yashirish",
+      rate_loading: "Kurs yangilanmoqda…",
+      rate_success_cbu: "O'zbekiston MB kursi, {date}",
+      rate_success_market: "Kurs yangilandi",
+      rate_error: "Kursni yangilab bo'lmadi — saqlangan qiymatlar ishlatiladi"
     }
   };
 
@@ -787,10 +828,6 @@
     const chinaCost = Math.round((priceUsd + cargoUsd) * rateUsd);
     document.getElementById('chinaCostOut').textContent = fmt(chinaCost) + data.sum;
 
-    const rateBtnText = document.getElementById('rateToggleBtn').classList.contains('open') ? data.rateToggleTplClose : data.rateToggleTpl;
-    document.querySelector('#rateToggleBtn span').textContent = rateBtnText
-      .replace('{usd}', fmt(rateUsd)).replace('{cny}', fmtVol(rateCny));
-
     const salePrice = v('salePrice'), commissionPct = v('commissionPct'), fulfillCost = v('fulfillCost');
     const commissionSum = salePrice * (commissionPct / 100);
     const netProfit = salePrice - commissionSum - logisticsFee - storageFee - fulfillCost - chinaCost;
@@ -815,11 +852,12 @@
     const btn = document.getElementById(btnId);
     const isOpen = panel.classList.toggle('open');
     btn.classList.toggle('open', isOpen);
+    const data = langData[currentLang];
     if (panelId === 'tariffPanel') {
-      btn.querySelector('span').textContent = isOpen ? langData[currentLang].c2_toggle_close : langData[currentLang].c2_toggle;
+      btn.querySelector('span').textContent = isOpen ? data.c2_toggle_close : data.c2_toggle;
     }
     if (panelId === 'ratePanel') {
-      recalc();
+      btn.querySelector('span').textContent = isOpen ? data.c3_toggle_close : data.c3_toggle;
     }
   }
 
@@ -838,6 +876,7 @@
       if (data[key] !== undefined) el.innerHTML = data[key];
     });
     document.documentElement.lang = lang;
+    renderRateStatus();
     recalc();
   }
 
@@ -888,7 +927,80 @@
     });
   }
 
+  // ===== АВТОПОДТЯЖКА КУРСА ВАЛЮТ =====
+  // Основной источник — официальный курс ЦБ Узбекистана, резервный — открытый рыночный API.
+  // Если оба недоступны (нет сети, CORS, отказ сервера) — тихо остаёмся на последних
+  // сохранённых/введённых значениях, ничего не ломая для пользователя.
+  let lastRateStatus = { type: 'loading' };
+
+  function renderRateStatus() {
+    const data = langData[currentLang];
+    const wrap = document.getElementById('rateStatus');
+    const textEl = document.getElementById('rateStatusText');
+    wrap.classList.toggle('error', lastRateStatus.type === 'error');
+    if (lastRateStatus.type === 'cbu') {
+      textEl.textContent = data.rate_success_cbu.replace('{date}', lastRateStatus.date || '');
+    } else if (lastRateStatus.type === 'market') {
+      textEl.textContent = data.rate_success_market;
+    } else if (lastRateStatus.type === 'error') {
+      textEl.textContent = data.rate_error;
+    } else {
+      textEl.textContent = data.rate_loading;
+    }
+  }
+
+  async function fetchFromCBU() {
+    const res = await fetch('https://cbu.uz/ru/arkhiv-kursov-valyut/json/all/');
+    if (!res.ok) throw new Error('cbu: bad status');
+    const list = await res.json();
+    const usd = Array.isArray(list) && list.find(c => c.Ccy === 'USD');
+    const cny = Array.isArray(list) && list.find(c => c.Ccy === 'CNY');
+    if (!usd || !cny) throw new Error('cbu: currency not found');
+    const usdNominal = parseFloat(String(usd.Nominal).replace(',', '.')) || 1;
+    const cnyNominal = parseFloat(String(cny.Nominal).replace(',', '.')) || 1;
+    const usdRateUzs = parseFloat(String(usd.Rate).replace(',', '.')) / usdNominal;
+    const cnyRateUzs = parseFloat(String(cny.Rate).replace(',', '.')) / cnyNominal;
+    if (!usdRateUzs || !cnyRateUzs) throw new Error('cbu: bad rate');
+    return { usdToSum: usdRateUzs, cnyPerUsd: usdRateUzs / cnyRateUzs, date: usd.Date || '' };
+  }
+
+  async function fetchFromMarket() {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!res.ok) throw new Error('market: bad status');
+    const json = await res.json();
+    if (json.result !== 'success' || !json.rates || !json.rates.UZS || !json.rates.CNY) throw new Error('market: bad data');
+    return { usdToSum: json.rates.UZS, cnyPerUsd: json.rates.CNY };
+  }
+
+  async function fetchRates() {
+    const refreshBtn = document.getElementById('rateRefreshBtn');
+    refreshBtn.classList.add('spinning');
+    lastRateStatus = { type: 'loading' };
+    renderRateStatus();
+    try {
+      let result, sourceType;
+      try {
+        result = await fetchFromCBU();
+        sourceType = 'cbu';
+      } catch (e1) {
+        result = await fetchFromMarket();
+        sourceType = 'market';
+      }
+      document.getElementById('rateUsd').value = Math.round(result.usdToSum);
+      document.getElementById('rateCny').value = result.cnyPerUsd.toFixed(2);
+      lastRateStatus = sourceType === 'cbu' ? { type: 'cbu', date: result.date } : { type: 'market' };
+      renderRateStatus();
+      recalc();
+    } catch (e) {
+      lastRateStatus = { type: 'error' };
+      renderRateStatus();
+    } finally {
+      refreshBtn.classList.remove('spinning');
+    }
+  }
+
   recalc();
+  fetchRates();
 </script>
 </body>
 </html>
