@@ -156,6 +156,45 @@
   .nav-cta:hover { background: var(--orange-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,92,0,0.45); }
   .nav-cta:hover::after { transform: translateX(120%); }
 
+  /* MOBILE NAV — гамбургер появляется ниже 900px, чтобы лого + язык + 3 ссылки не давили друг друга */
+  .nav-toggle {
+    display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    width: 38px; height: 38px; background: var(--dark3); border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; padding: 0; flex-shrink: 0; transition: border-color 0.2s ease;
+  }
+  .nav-toggle:hover { border-color: var(--border-bright); }
+  .nav-toggle span { width: 16px; height: 1.5px; background: var(--text); border-radius: 1px; transition: transform 0.3s var(--ease-spring), opacity 0.2s ease; }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .nav-mobile-panel {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+    background: rgba(12,12,14,0.97); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px; padding: 86px 20px 24px;
+    transform: translateY(-12px); opacity: 0; pointer-events: none; visibility: hidden;
+    transition: transform 0.3s var(--ease-out), opacity 0.25s ease, visibility 0s linear 0.3s;
+  }
+  .nav-mobile-panel.open { transform: translateY(0); opacity: 1; pointer-events: all; visibility: visible; transition: transform 0.3s var(--ease-out), opacity 0.25s ease; }
+  .nav-mobile-link {
+    color: var(--text); text-decoration: none; font-size: 15px; font-weight: 600; padding: 15px 18px;
+    background: var(--dark3); border: 1px solid var(--border); border-radius: var(--r-sm); text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .nav-mobile-link:hover { border-color: var(--border-bright); background: var(--dark4); }
+  .nav-mobile-cta {
+    color: #fff; background: var(--orange); text-decoration: none; font-size: 15px; font-weight: 700;
+    padding: 16px 18px; border-radius: var(--r-sm); text-align: center; box-shadow: 0 8px 24px rgba(255,92,0,0.3);
+  }
+  @media(max-width: 900px) {
+    .nav-link-desktop { display: none; }
+    .nav-toggle { display: flex; }
+  }
+  @media(min-width: 901px) {
+    .nav-mobile-panel { display: none; }
+  }
+
   /* HERO */
   .hero {
     min-height: 100vh;
@@ -258,6 +297,7 @@
     flex-wrap: wrap; justify-content: center;
   }
   .stat { text-align: center; }
+  .stat-mid { border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); padding: 0 48px; }
   .stat-num { font-family: 'Unbounded', sans-serif; font-size: 28px; font-weight: 800; color: var(--text); }
   .stat-num span { color: var(--orange); }
   .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
@@ -871,6 +911,24 @@
     font-size: 14px; font-weight: 600; text-decoration: none; transition: top 0.25s ease;
   }
   .skip-link:focus { top: 16px; }
+
+  /* ===== МОБИЛЬНАЯ ПОЛИРОВКА (узкие экраны) ===== */
+  @media(max-width: 640px) {
+    .hero { padding: 110px 20px 64px; }
+    .hero-stats { flex-direction: column; gap: 22px; margin-top: 56px; }
+    .stat-mid { border-left: none; border-right: none; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 22px 0; }
+    .srv-card { padding: 18px; }
+    .form-section { padding: 40px 20px; }
+    .calc-result-box { padding: 22px; }
+    .calc-container { padding: 18px; }
+    .pkg-card { padding: 24px; }
+  }
+  @media(max-width: 420px) {
+    .steps-row { grid-template-columns: 1fr; gap: 28px; }
+    .radio-group { flex-direction: column; }
+    .hero-btns { width: 100%; }
+    .hero-btns .btn-primary, .hero-btns .btn-secondary { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
@@ -908,11 +966,20 @@
       <option value="ru">RU</option>
       <option value="uz">UZ</option>
     </select>
-    <a href="calculator.html" class="nav-courses" data-key="nav_calc">Калькулятор</a>
-    <a href="courses.html" class="nav-courses" data-key="nav_courses">Курсы</a>
-    <a href="#form" class="nav-cta" data-key="nav_cta">Бесплатная консультация</a>
+    <a href="calculator.html" class="nav-courses nav-link-desktop" data-key="nav_calc">Калькулятор</a>
+    <a href="courses.html" class="nav-courses nav-link-desktop" data-key="nav_courses">Курсы</a>
+    <a href="#form" class="nav-cta nav-link-desktop" data-key="nav_cta">Бесплатная консультация</a>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Открыть меню" aria-expanded="false" aria-controls="navMobilePanel">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+<div class="nav-mobile-panel" id="navMobilePanel">
+  <a href="calculator.html" class="nav-mobile-link" data-key="nav_calc" onclick="closeMobileNav()">Калькулятор</a>
+  <a href="courses.html" class="nav-mobile-link" data-key="nav_courses" onclick="closeMobileNav()">Курсы</a>
+  <a href="#form" class="nav-mobile-cta" data-key="nav_cta" onclick="closeMobileNav()">Бесплатная консультация</a>
+</div>
+
 
 <!-- HERO -->
 <section class="hero" id="hero">
@@ -941,7 +1008,7 @@
       <div class="stat-num"><span class="count" data-count="80">0</span><span>%</span></div>
       <div class="stat-label" data-key="stat_1">новичков теряют деньги<br>без правильного старта</div>
     </div>
-    <div class="stat" style="border-left:1px solid rgba(255,255,255,0.08); border-right:1px solid rgba(255,255,255,0.08); padding:0 48px;">
+    <div class="stat stat-mid">
       <div class="stat-num"><span class="count" data-count="15">0</span> <span style="font-family:'Inter'; font-size:28px; font-weight:800;" data-key="stat_2_unit">мин</span></div>
       <div class="stat-label" data-key="stat_2">до первого звонка<br>от нашего менеджера</div>
     </div>
@@ -1999,6 +2066,28 @@
     document.getElementById('langDropWrap').classList.remove('open');
     changeLanguage(val);
   }
+
+  /* ===== МОБИЛЬНОЕ МЕНЮ (гамбургер) ===== */
+  function toggleMobileNav() {
+    const panel = document.getElementById('navMobilePanel');
+    const btn = document.getElementById('navToggle');
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  function closeMobileNav() {
+    document.getElementById('navMobilePanel').classList.remove('open');
+    document.getElementById('navToggle').classList.remove('open');
+    document.getElementById('navToggle').setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMobileNav();
+  });
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 900) closeMobileNav();
+  });
 
   function toggleBudgetDrop() {
     const wrap = document.getElementById('budgetDropWrap');
